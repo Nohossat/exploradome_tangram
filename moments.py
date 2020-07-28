@@ -5,54 +5,53 @@ import pandas as pd
 import os
 
 def get_files():
-    images = []
+    images = {}
     dirname = os.getcwd() + '/data/tangrams'
     assert os.path.exists(dirname), "the directory doesn't exist"
 
     for file in os.listdir(dirname):
+        filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
         if file.endswith((".jpg", ".JPG")):
-            images.append(os.path.join(dirname, file))
-    
+            images[filename] = os.path.join(dirname, file)
     return images
 
-def img_preprocessing(image):
-    # load the image, convert it to grayscale, blur it slightly,    
-    # and threshold it : à quoi ça sert le threshold ?
-    image = cv2.imread(image)
-        
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
+def resize_img(img,left_side=True):
+    img =resize(img,20)[0:-50, 55:-100].copy() # reisze img to 20% and crop to keep only board
+    if left_side == True:
+        img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the left half of the board
+    elif left_side == False:
+        img = img[0:int(img.shape[0]),int(img.shape[1]/2):] # keep only the right half of the board
+    return img
 
-    # find contours in the thresholded image
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+def find_humos(img,filename, sensitivity_to_light=50):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #binarize img
+    gray[gray>sensitivity_to_light] = 0 # turn background to black
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
+    lst_moments = [cv2.moments(c) for c in cnts] # retrieve moments of all shapes identified
+    lst_areas = [i["m00"] for i in lst_moments] # retrieve areas of all shapes
+    
+    max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
+    HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
+    # HuMo.append(filename)
+    HuMo = np.append(HuMo, filename)
+    return HuMo
 
-    return cnts
-
-def get_moment(image):
-    """
-    from an Open CV image, get its moments and return them
-    """
-    moments = []
-    hu_moments = []
-    cnts = img_preprocessing(image)
-    for c in cnts:
-        M = cv2.moments(c)
-        moments.append(M)
-        huMo = cv2.HuMoments(M)
-        hu_moments.append(huMo)
-    return moments[0], hu_moments[0]
+def resize(img,percent=20):
+    scale_percent = percent # percent of original size
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA).copy()
+    return img
 
 def save_moments(images):
-    moments_list = []
-    hu_moments_list = []
-    for image in images:
-        moments, hu_moments = get_moment(image)
-        moments_list.append(moments)
-        hu_moments_list.append(hu_moments)
-        print(hu_moments_list)
-    return moments_list, hu_moments_list
+    hu_moments = []
+    for image_name, image_path in images.items():
+        image = cv2.imread(image_path)
+        hu_moments.append(find_humos(image, image_name))
+    return np.array(hu_moments).reshape(12, 8)
 
 def compare_moments_with_labels():
     """
@@ -89,46 +88,6 @@ if __name__ == '__main__':
     # if we call this file directly, we compute the moments for all the classes
     # save moments for each class
     images = get_files()
-    moments, hu_moments = save_moments(images)
-
-    moments_df = pd.DataFrame(moments)
-    moments_df.to_csv('moments.csv', index=False)
-
-
-
-
-
-
-
-
-
-
-
-def resize_img(img,left_side=True):
-    img =resize(img,20)[0:-50, 55:-100].copy() # reisze img to 20% and crop to keep only board
-    if left_side == True:
-        img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the left half of the board
-    elif left_side == False:
-        img = img[0:int(img.shape[0]),int(img.shape[1]/2):] # keep only the right half of the board
-    return img
-
-def find_humos(img,sensitivity_to_light=50):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #binarize img
-    gray[gray>sensitivity_to_light] = 0 # turn background to black
-    thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    lst_moments = [cv2.moments(c) for c in cnts] # retrieve moments of all shapes identified
-    lst_areas = [i["m00"] for i in lst_moments] # retrieve areas of all shapes
-    
-    max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
-    HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
-    return HuMo
-
-def resize(img,percent=20):
-    scale_percent = percent # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA).copy()
-    return img
+    hu_moments = save_moments(images)
+    hu_moments_df = pd.DataFrame(hu_moments)
+    hu_moments_df.to_csv('hu_moments.csv', index=False)
