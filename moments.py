@@ -93,56 +93,6 @@ def find_moments(cnts, filename=None, hu_moment = True):
         Moms['target'] = filename
     return Moms
 
-def save_moments(images):
-    """
-    compute moments for all images in our dataset
-    """
-    hu_moments = []
-    moments = []
-
-    for image_name, image_path in images.items():
-        img_cv = cv2.imread(image_path)
-
-        cnts, img = preprocess_img_test(img_cv)
-        display_contour(cnts, img)
-        hu_moments.append(find_moments(cnts, image_name))
-        moments.append(find_moments(cnts, image_name, hu_moment=False))
-
-    return hu_moments, moments
-
-def compare_moments_with_labels():
-    """
-    get CSV file and compare the moments from each class with the moments of the frame
-    """
-    pass
-
-def read_video():
-    """
-    compare moments of each frame with the hu moments of our dataset images
-    """
-    cap = cv2.VideoCapture(0)
-
-    while(True):
-        # Capture frame-by-frame
-        ret, image = cap.read()
-
-        # Our operations on the frame come here
-        cnts_right, img = preprocess_img(image, left_side=False)
-        # img_false = preprocess_img(image)
-
-        HuMo = find_moments(cnts_right)
-
-        proba = compare_moments_with_labels()
-        print(proba)
-
-        # Display the resulting frame
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
-
 def display_contour(cnts, img):
     for c in cnts:
         #compute the center of the contour
@@ -167,27 +117,39 @@ def dist_humoment3(hu1,hu2):
     distance =  np.sum(abs(hu1-hu2)/abs(hu2))
     return distance
 
-def save_moments_to_csv():
-     # save moments for each class
-    images = get_files()
+def save_moments(images):
+    """
+    compute moments for all images in our dataset
+    """
+    hu_moments = []
+    moments = []
 
-    hu_moments, moments = save_moments(images)
-    hu_moments_df = pd.DataFrame(hu_moments)
-    hu_moments_df.to_csv('data/hu_moments.csv', index=False)
+    for image_name, image_path in images.items():
+        img_cv = cv2.imread(image_path)
 
-    moments_df = pd.DataFrame(moments)
-    moments_df.to_csv('data/moments.csv', index=False)
+        cnts, img = preprocess_img_test(img_cv)
+        display_contour(cnts, img)
+        hu_moments.append(find_moments(cnts, image_name))
+        moments.append(find_moments(cnts, image_name, hu_moment=False))
 
+        hu_moments_df = pd.DataFrame(hu_moments)
+        hu_moments_df.to_csv('data/hu_moments.csv', index=False)
+
+        moments_df = pd.DataFrame(moments)
+        moments_df.to_csv('data/moments.csv', index=False)
+
+    return hu_moments, moments
+    
 def test():
     hu_moments = pd.read_csv('data/hu_moments.csv')
     target = hu_moments.iloc[:, -1]
+
     # get 1 img
     images = get_files()
 
     # preprocess
     img_cv = cv2.imread(images['bateau'])
     cnts, img_cv = preprocess_img_test(img_cv)
-    # display_contour(cnts, img_cv)
 
     HuMo = find_moments(cnts)
     print(HuMo)
@@ -196,6 +158,38 @@ def test():
     proba_labelled = pd.concat([proba, target], axis=1)
     proba_labelled.columns = ['distance', 'target']
     print(proba_labelled.sort_values(by=["distance"]))
+
+def read_video():
+    """
+    compare moments of each frame with the hu moments of our dataset images
+    """
+
+    hu_moments = pd.read_csv('data/hu_moments.csv')
+    target = hu_moments.iloc[:, -1]
+
+    cap = cv2.VideoCapture(0)
+
+    while(True):
+        # Capture frame-by-frame
+        ret, image = cap.read()
+
+        # Our operations on the frame come here
+        cnts, img = preprocess_img(image, left_side=False)
+        HuMo = np.hstack(find_moments(cnts))
+
+        # get distances
+        dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
+        dist_labelled = pd.concat([dist, target], axis=1)
+        dist_labelled.columns = ['distance', 'target']
+        print(dist_labelled.sort_values(by=["distance"]))
+
+        # Display the resulting frame
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     # test distance
