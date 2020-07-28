@@ -108,3 +108,11 @@ def find_humos(img,sensitivity_to_light=50):
     max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
     HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
     return HuMo
+
+def resize(img,percent=20):
+    scale_percent = percent # percent of original size
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA).copy()
+    return img
