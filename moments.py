@@ -4,15 +4,21 @@ import imutils
 import pandas as pd
 import os
 
-images = ['bateau', 'chat', 'coeur', 'cygne', 'lapin', 'maison', 'marteau', 'montagne', 'pont', 'renard', 'bol']
+def get_files():
+    images = []
+    dirname = os.getcwd() + '/data/tangrams'
+    assert os.path.exists(dirname), "the directory doesn't exist"
 
-def img_preprocessing(image, path = None):
+    for file in os.listdir(dirname):
+        if file.endswith((".jpg", ".JPG")):
+            images.append(os.path.join(dirname, file))
+    
+    return images
+
+def img_preprocessing(image):
     # load the image, convert it to grayscale, blur it slightly,    
     # and threshold it : à quoi ça sert le threshold ?
-    if path:
-        image = cv2.imread(f'tangrams/{image}.JPG')
-    else :
-        image = cv2.imread(image)
+    image = cv2.imread(image)
         
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -24,22 +30,29 @@ def img_preprocessing(image, path = None):
 
     return cnts
 
-def get_moment(image, path):
+def get_moment(image):
     """
     from an Open CV image, get its moments and return them
     """
     moments = []
-    cnts = img_preprocessing(image, path = path)
-
+    hu_moments = []
+    cnts = img_preprocessing(image)
     for c in cnts:
         M = cv2.moments(c)
         moments.append(M)
-    return moments
+        huMo = cv2.HuMoments(M)
+        hu_moments.append(huMo)
+    return moments[0], hu_moments[0]
 
-def save_moments():
+def save_moments(images):
+    moments_list = []
+    hu_moments_list = []
     for image in images:
-        moments = get_moment(image, path = True)
-    return moments
+        moments, hu_moments = get_moment(image)
+        moments_list.append(moments)
+        hu_moments_list.append(hu_moments)
+        print(hu_moments_list)
+    return moments_list, hu_moments_list
 
 def compare_moments_with_labels():
     """
@@ -75,5 +88,11 @@ def read_video():
 if __name__ == '__main__':
     # if we call this file directly, we compute the moments for all the classes
     # save moments for each class
-    moments_df = pd.DataFrame(save_moments())
+    images = get_files()
+    moments, hu_moments = save_moments(images)
+
+    moments_df = pd.DataFrame(moments)
     moments_df.to_csv('moments.csv', index=False)
+
+    hu_moments_df = pd.DataFrame(hu_moments)
+    hu_moments_df.to_csv('hu_moments.csv', index=False)
