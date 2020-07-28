@@ -19,7 +19,12 @@ def get_files():
             images[filename] = os.path.join(dirname, file)
     return images
 
-def resize_img(img,left_side=True):
+def preprocess_img(img,left_side=True):
+    '''
+    this function takes a cv image as input, calls the resize function then crops the image to keep only the board.
+    It then chooses the left or right half of the board, based on user input 
+    '''
+
     img =resize(img,20)[0:-50, 55:-100].copy() # reisze img to 20% and crop to keep only board
     if left_side == True:
         img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the left half of the board
@@ -28,7 +33,14 @@ def resize_img(img,left_side=True):
     return img
 
 def find_humos(img,filename, sensitivity_to_light=50):
+<<<<<<< HEAD
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # binarize img
+=======
+    '''
+    this function finds the largest dark shape in the image and returns the shape's Hu Moments.
+    '''
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #binarize img
+>>>>>>> ffa73666f2c9f77e04c4186e1e5f15871bf74f85
     gray[gray>sensitivity_to_light] = 0 # turn background to black
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -42,6 +54,10 @@ def find_humos(img,filename, sensitivity_to_light=50):
     return HuMo
 
 def resize(img,percent=20):
+    '''
+    this function takes a cv image as input and resizes it. The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
+    the secondary objective is to speed up processing.
+    '''
     scale_percent = percent # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
