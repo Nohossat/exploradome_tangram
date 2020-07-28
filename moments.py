@@ -3,8 +3,12 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
+import time
 
 def get_files():
+    """
+    get images in jpg format in tangrams folder
+    """
     images = {}
     dirname = os.getcwd() + '/data/tangrams'
     assert os.path.exists(dirname), "the directory doesn't exist"
@@ -24,7 +28,7 @@ def resize_img(img,left_side=True):
     return img
 
 def find_humos(img,filename, sensitivity_to_light=50):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #binarize img
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # binarize img
     gray[gray>sensitivity_to_light] = 0 # turn background to black
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -34,7 +38,6 @@ def find_humos(img,filename, sensitivity_to_light=50):
     
     max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
     HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
-    # HuMo.append(filename)
     HuMo = np.append(HuMo, filename)
     return HuMo
 
@@ -47,6 +50,9 @@ def resize(img,percent=20):
     return img
 
 def save_moments(images):
+    """
+    compute moments for all images in our dataset
+    """
     hu_moments = []
     for image_name, image_path in images.items():
         image = cv2.imread(image_path)
@@ -60,6 +66,9 @@ def compare_moments_with_labels():
     pass
 
 def read_video():
+    """
+    compare moments of each frame with the hu moments of our dataset images
+    """
     cap = cv2.VideoCapture(0)
 
     while(True):
