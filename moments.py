@@ -88,7 +88,11 @@ if __name__ == '__main__':
 
 
 
-def resize_img(img,left_side=True):
+def preprocess_img(img,left_side=True):
+    '''
+    This fonction takes as input the image from the webcam, resizes it, crops it and keeps only the 
+    right of left side of the board
+    '''
     img =resize(img,20)[0:-50, 55:-100].copy() # reisze img to 20% and crop to keep only board
     if left_side == True:
         img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the left half of the board
@@ -97,6 +101,9 @@ def resize_img(img,left_side=True):
     return img
 
 def find_humos(img,sensitivity_to_light=50):
+    ''' 
+    from a resized image, this function grabs the Hu Moments of the largest dark shape in the image 
+    '''
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #binarize img
     gray[gray>sensitivity_to_light] = 0 # turn background to black
     thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]
@@ -110,6 +117,10 @@ def find_humos(img,sensitivity_to_light=50):
     return HuMo
 
 def resize(img,percent=20):
+    '''
+    this function resizes the webcam image to a smaller size, primarily to diminish contouring sensitivity and secondarily to 
+    reduce processing time
+    '''
     scale_percent = percent # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
