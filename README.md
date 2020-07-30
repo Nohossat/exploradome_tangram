@@ -30,4 +30,4 @@ Keywords : Hu Moments, distances
 - [ ] ré-organisation des fichiers dans le GitHub - Nohossat
 
 
-[Lien Google Drive](https://drive.google.com/drive/folders/1pmuPaserBOOIrdrdmM8uy592v4ylJlHx?usp=sharing)
+[Dataset](https://drive.google.com/drive/folders/1pmuPaserBOOIrdrdmM8uy592v4ylJlHx?usp=sharing)
