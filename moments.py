@@ -8,15 +8,31 @@ from processing import *
 
 def find_moments(cnts, filename=None, hu_moment = True):
     '''
-    this function returns the shape's Hu Moments.
+    this function returns the shape's Moments or Hu Moments.
+
+    =========
+
+    Parameters : 
+
+    cnts : contours of an image
+    filename : name of the image, useful when target name needed
+    hu_moment : returns Hu Moments. if set to False, returns only the Moments
+
+    ========
+
+    Returns : Moments or Hu moments
+
+    ========
     author : @Bastien
+    
     '''
+
     lst_moments = [cv2.moments(c) for c in cnts] # retrieve moments of all shapes identified
     lst_areas = [i["m00"] for i in lst_moments] # retrieve areas of all shapes
     
     max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
 
-    if hu_moment: # if we want the Hu moments instead
+    if hu_moment: # if we want the Hu moments
         HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
         if filename:
             HuMo = np.append(HuMo, filename)
@@ -28,90 +44,34 @@ def find_moments(cnts, filename=None, hu_moment = True):
         Moms['target'] = filename
     return Moms
 
-def save_moments(images):
+def get_predictions(image, hu_moments, target, side, crop = True):
     """
-    compute moments for all images in our dataset
-    author : @Nohossat
-    """
-    hu_moments = []
-    moments = []
+    compare moments of a frame with the hu moments of our dataset images  
 
-    for image_name, image_path in images.items():
-        img_cv = cv2.imread(image_path)
+    =========
 
-        cnts, img = preprocess_img_test(img_cv)
-        display_contour(cnts, img)
-        hu_moments.append(find_moments(cnts, image_name))
-        moments.append(find_moments(cnts, image_name, hu_moment=False))
+    Parameters : 
 
-        hu_moments_df = pd.DataFrame(hu_moments)
-        hu_moments_df.to_csv('data/hu_moments.csv', index=False)
+    image : OpenCV image
+    hu_moments : dataset with the humoments of each class
+    target : name of the classes
+    side : which side should be analyzed - left / right / full image
+    crop : by default set to True, set to False, when testing
 
-        moments_df = pd.DataFrame(moments)
-        moments_df.to_csv('data/moments.csv', index=False)
+    ========
 
-    return hu_moments, moments
-    
-def get_distance_img_test(image):
-    """
-    test the main algorithm on 1 image
-    author : @Nohossat
-    """
-    hu_moments = pd.read_csv('data/hu_moments.csv')
-    target = hu_moments.iloc[:, -1]
+    Return : print the probabilities to belong to each class in descending order
 
-    # get 1 img
-    images = get_files()
-
-    # preprocessing the image
-    img_cv = cv2.imread(images[image])
-    cnts, img_cv = preprocess_img_test(img_cv)
-
-    # compute distance
-    HuMo = find_moments(cnts)
-    proba = hu_moments.apply(lambda row : dist_humoment2(np.hstack(HuMo), row.values[:-1]), axis=1)
-    proba_labelled = pd.concat([proba, target], axis=1)
-    proba_labelled.columns = ['distance', 'target']
-    print(proba_labelled.sort_values(by=["distance"]))
-
-def read_video(video=False):
-    """
-    compare moments of each frame with the hu moments of our dataset images
     author : @Nohossat
     """
 
-    hu_moments = pd.read_csv('data/hu_moments.csv')
-    target = hu_moments.iloc[:, -1]
+    # Our operations on the frame come here
+    cnts, img = preprocess_img(image, left_side=side, crop = crop)
+    HuMo = np.hstack(find_moments(cnts))
 
-    if video:
-        cap = cv2.VideoCapture(video)
-    else : 
-        cap = cv2.VideoCapture(0)
+    # get distances
+    dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
+    dist_labelled = pd.concat([dist, target], axis=1)
+    dist_labelled.columns = ['distance', 'target']
+    print(dist_labelled.sort_values(by=["distance"]))
 
-    while(cap.isOpened()):
-        # Capture frame-by-frame
-        ret, image = cap.read()
-
-        if ret :
-            print(ret)
-
-        # Our operations on the frame come here
-        cnts, img = preprocess_img(image, left_side=False)
-        HuMo = np.hstack(find_moments(cnts))
-
-        # get distances
-        dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
-        dist_labelled = pd.concat([dist, target], axis=1)
-        dist_labelled.columns = ['distance', 'target']
-        print(dist_labelled.sort_values(by=["distance"]))
-
-        # Display the resulting frame
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
-
-if __name__ == '__main__':
-    get_distance_img_test('cygne') # only for testing

@@ -6,6 +6,21 @@ Tangram form detection from live video stream
 TBD
 Keywords : Hu Moments, distances
 
+## Testing
+
+### Unit Tests
+
+We test each function individually
+
+### Integration Tests
+
+#### Static tests
+We compare an image with our dataset. We need several images by class.
+
+#### Video tests
+We compare a video with our dataset. We need different sequences with a clear solution
+
+
 ## TODOS
 
 ### Récupération des caractéristiques des images
@@ -22,6 +37,8 @@ Keywords : Hu Moments, distances
 
 ### Tests
 - [ ] tests unitaires - Renata
+- [x] stratégie de test
+- [ ] optimisation du code - Nohossat
 - [ ] découpage des videos - Nohossat
 - [ ] tests d'intégration - TBD
 

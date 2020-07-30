@@ -3,62 +3,41 @@ import os
 import cv2
 import imutils
 
-def get_files():
-    """
-    get images in jpg format in tangrams folder
-    author : @Nohossat
-    """
-    images = {}
-    dirname = os.getcwd() + '/data/tangrams'
-    assert os.path.exists(dirname), "the directory doesn't exist"
-
-    for file in os.listdir(dirname):
-        filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
-        if file.endswith((".jpg", ".JPG")):
-            images[filename] = os.path.join(dirname, file)
-    return images
-
-def preprocess_img_test(img, sensitivity_to_light=50):
+def preprocess_img(img, left_side=True, crop = True, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, 
-    chooses the left or right half of the board, based on user input and eventually finds the largest dark shape
-    author : @Nohossat
+    chooses the left / right half of the board or the full board if the child is playing alone, 
+    and eventually finds the largest dark shape
+    =========
+
+    Parameters : 
+
+    img = OpenCV image
+    left_side = process either left/right side or full frame.  - True by default
+    crop = decides if image needs cropping - set crop to False when processing dataset images, they are already cut
+    sensitivity_to_light = parameter to turn the background black
+
+    author : @BasCR-hub
     '''
 
-    # resize operations
-    img = resize(img, 20).copy()
+    img = resize(img).copy()
 
-    # get the largest shape
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # binarize img
-    gray[gray>sensitivity_to_light] = 0 # turn background to black
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1] # threshold ???
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    return cnts, img
+    if crop :
+        if left_side is None:
+            img = img[0:-50, 55:-100] # if child plays alone
+        elif not left_side :
+            img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the right half of the board
+        else :
+            img = img[0:int(img.shape[0]),int(img.shape[1]/2):] # keep only the left half of the board
 
-def preprocess_img(img, left_side=True, sensitivity_to_light=50):
-    '''
-    this function takes a cv image as input, calls the resize function, crops the image to keep only the board, 
-    chooses the left or right half of the board, based on user input and eventually finds the largest dark shape
-    author : @Bastien
-    '''
-
-    # resize operations
-    img = resize(img,20)[0:-50, 55:-100].copy() # resize img to 20% and crop to keep only board
-
-    if left_side:
-        img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the left half of the board
-    else:
-        img = img[0:int(img.shape[0]),int(img.shape[1]/2):] # keep only the right half of the board
     
     # get the largest shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # binarize img
     gray[gray>sensitivity_to_light] = 0 # turn background to black
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1] # threshold ???
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0) # ??
+    thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]  # ??
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
+    cnts = imutils.grab_contours(cnts) # we need the contours to compute Hu moments
     return cnts, img
 
 def resize(img, percent=20):
@@ -66,7 +45,15 @@ def resize(img, percent=20):
     this function takes a cv image as input and resizes it. 
     The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
     the secondary objective is to speed up processing.
-    author : @Bastien
+
+    =========
+
+    Parameters : 
+
+    img : OpenCV image
+    percent : the percentage of the scaling
+
+    author : @BasCR-hub
     '''
     scale_percent = percent # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
@@ -78,14 +65,23 @@ def resize(img, percent=20):
 def display_contour(cnts, img):
     """
     display the contour of the image
-    author : @Bastien
+
+    =========
+
+    Parameters : 
+    cnts : contours of the forms in the image
+    img : OpenCV image
+
+    author : @BasCR-hub
     """
     for c in cnts:
-        #compute the center of the contour
-        M = cv2.moments(c)
-        huM = cv2.HuMoments(M)
-        # draw the contour and center of the shape on the image
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
-    # show the image
     cv2.imshow("Image", img)
     cv2.waitKey(0)
+
+
+if __name__ == "__main__":
+    # testing the contour of the image => see with Renata how to include it to integration tests
+    img_cv = cv2.imread('data/tangrams/renard.jpg')
+    cnts, img = preprocess_img(img_cv, crop=False)
+    display_contour(cnts, img)
