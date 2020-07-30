@@ -3,7 +3,7 @@ Tangram form detection from live video stream
 
 ## Approach
 
-TBD
+TBD  
 Keywords : Hu Moments, distances
 
 ## Testing
@@ -28,9 +28,11 @@ We compare a video with our dataset. We need different sequences with a clear so
 - [x] récupération des Hu moments dataset tangrams
 - [x] processing des images pour récupérer leur contour
 - [x] récupérer le nombre de sommets dans une image
-- [ ] utiliser les sommets pour déterminer si on peut calculer les probabilités - Nicolas, Bastien
+- [x] utiliser les sommets pour déterminer si on peut calculer les probabilités - non significatif
+- [ ] utiliser l'aire globale du tangram pour améliorer les prédictions - Bastien 
 - [x] écriture des fonctions de calcul de distances
 - [ ] convertir distances en probabilités - Gauthier
+- [ ] calcul du périmètre pour améliorer les prédictions - Nicolas
 
 ### Prédictions
 - [x] affichage des prédictions en temps réel
@@ -44,7 +46,8 @@ We compare a video with our dataset. We need different sequences with a clear so
 
 ### Version control
 - [ ] ecriture du readme - TBD
-- [ ] ré-organisation des fichiers dans le GitHub - Nohossat
+- [x] ré-organisation des fichiers dans le GitHub - Nohossat
 
+### Dataset avec les tangrams
 
 [Dataset](https://drive.google.com/drive/folders/1pmuPaserBOOIrdrdmM8uy592v4ylJlHx?usp=sharing)
