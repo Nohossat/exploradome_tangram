@@ -12,34 +12,32 @@ import imutils
 import pandas as pd
 import os
  
-from moments.py import *
+import sys
+sys.path.insert(0, '/exploradome_tangram-numpy-team-4')
 
-def get_files_test():
-    dicto = {'bateau.jpg', }
-    assert get_files() == dicto
-    #assert os.path.exists(dirname), "the directory doesn't exist"
+import moments.py
 
-def preprocess_img_test():
-    from PIL import Image
-try:
-    im=Image.open(filename)
-    # do stuff
-except IOError:
-    # filename not an image file
-    # verification extension of file *.img
-    
-def find_humos_test(img,filename, sensitivity_to_light=50):
+#test returns the shape's Hu Moments
+def find_moments():
     os.path.exists(dirname), "the directory doesn't exist"
 
-def resize_test():
-    os.path.exists(dirname), "the directory doesn't exist"
-
+#test moments for all images in our dataset
 def save_moments_test():
     os.path.exists(dirname), "the directory doesn't exist"
-    
+
+#test the main algorithm on 1 image
+def get_distance_img_test(image):
+
+#test get distances
 def read_video_test(video=False):
     #verification de path of vidéo
     if __name__ == '__main__':
     #test distance
     get_distance_img_test('cygne)
+
+
+
+
+    
+
     
