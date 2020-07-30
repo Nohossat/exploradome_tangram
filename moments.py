@@ -9,6 +9,7 @@ from processing import *
 def find_moments(cnts, filename=None, hu_moment = True):
     '''
     this function returns the shape's Hu Moments.
+    author : @Bastien
     '''
     lst_moments = [cv2.moments(c) for c in cnts] # retrieve moments of all shapes identified
     lst_areas = [i["m00"] for i in lst_moments] # retrieve areas of all shapes
@@ -30,6 +31,7 @@ def find_moments(cnts, filename=None, hu_moment = True):
 def save_moments(images):
     """
     compute moments for all images in our dataset
+    author : @Nohossat
     """
     hu_moments = []
     moments = []
@@ -53,6 +55,7 @@ def save_moments(images):
 def get_distance_img_test(image):
     """
     test the main algorithm on 1 image
+    author : @Nohossat
     """
     hu_moments = pd.read_csv('data/hu_moments.csv')
     target = hu_moments.iloc[:, -1]
@@ -74,6 +77,7 @@ def get_distance_img_test(image):
 def read_video(video=False):
     """
     compare moments of each frame with the hu moments of our dataset images
+    author : @Nohossat
     """
 
     hu_moments = pd.read_csv('data/hu_moments.csv')

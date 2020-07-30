@@ -1,12 +1,30 @@
 # exploradome_tangram
 Tangram form detection from live video stream
 
-## reste à faire
+## Approach
 
-- convertir distances en probabilités
-- optimisation du code
-- création des tests unitaires
-- affichage des prédictions en temps réel
-- élaborer stratégie de test : quels sont les éléments à tester ? combien d'éléments on prend en test ? métriques ?
-- minimisation du code
-- écriture du readme
+TBD
+Keywords : Hu Moments, distances
+
+## TODOS
+
+### Récupération des caractéristiques des images
+- [x] fonction pour récupérer les Hu moments
+- [x] récupération des Hu moments dataset tangrams
+- [x] processing des images pour récupérer leur contour
+- [x] récupérer le nombre de sommets dans une image
+- [ ] utiliser les sommets pour déterminer si on peut calculer les probabilités - Nicolas, Bastien
+- [x] écriture des fonctions de calcul de distances
+- [ ] convertir distances en probabilités - Gauthier
+
+### Prédictions
+- [x] affichage des prédictions en temps réel
+
+### Tests
+- [ ] tests unitaires - Renata
+- [ ] découpage des videos - Nohossat
+- [ ] tests d'intégration - TBD
+
+### Version control
+- [ ] ecriture du readme - TBD
+- [ ] ré-organisation des fichiers dans le GitHub - Nohossat

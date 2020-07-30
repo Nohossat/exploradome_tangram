@@ -6,6 +6,7 @@ import imutils
 def get_files():
     """
     get images in jpg format in tangrams folder
+    author : @Nohossat
     """
     images = {}
     dirname = os.getcwd() + '/data/tangrams'
@@ -21,6 +22,7 @@ def preprocess_img_test(img, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, 
     chooses the left or right half of the board, based on user input and eventually finds the largest dark shape
+    author : @Nohossat
     '''
 
     # resize operations
@@ -39,6 +41,7 @@ def preprocess_img(img, left_side=True, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, 
     chooses the left or right half of the board, based on user input and eventually finds the largest dark shape
+    author : @Bastien
     '''
 
     # resize operations
@@ -63,6 +66,7 @@ def resize(img, percent=20):
     this function takes a cv image as input and resizes it. 
     The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
     the secondary objective is to speed up processing.
+    author : @Bastien
     '''
     scale_percent = percent # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
@@ -74,6 +78,7 @@ def resize(img, percent=20):
 def display_contour(cnts, img):
     """
     display the contour of the image
+    author : @Bastien
     """
     for c in cnts:
         #compute the center of the contour
