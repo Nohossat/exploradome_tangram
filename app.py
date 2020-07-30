@@ -7,7 +7,7 @@ from prepare_tangrams_dataset import get_files
 
 # main application
 
-def tangram_game(video=0, image = False):
+def tangram_game(side, crop, video=0, image = False):
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
@@ -18,6 +18,8 @@ def tangram_game(video=0, image = False):
 
     video : gives the channel to watch. False by default
     image : gives the filename of the image we want to predict. False by default
+    side : the side to analyze on the frame : left / right / full frame (None)
+    crop : crop image if raw image
 
     Returns : print predictions for each frame
 
@@ -33,7 +35,7 @@ def tangram_game(video=0, image = False):
     if image :
         images = get_files()
         image = cv2.imread(images[image])
-        print(get_predictions(image, hu_moments, target, side =  False, crop = False)) # get predictions
+        print(get_predictions(image, hu_moments, target, side = side, crop = crop))
 
     # compare video frames with dataset images
     if not isinstance(video, bool):
@@ -41,7 +43,7 @@ def tangram_game(video=0, image = False):
 
         while(cap.isOpened()):
             ret, image = cap.read() # Capture frame-by-frame
-            print(get_predictions(image, hu_moments, target, side = False, crop = False)) # get predictions
+            print(get_predictions(image, hu_moments, target, side = side, crop = crop))
 
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 break
@@ -51,4 +53,4 @@ def tangram_game(video=0, image = False):
         cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    tangram_game(video=False, image = 'bol') # only for testing
+    tangram_game(video=False, image = 'cygne', side="left", crop=False)

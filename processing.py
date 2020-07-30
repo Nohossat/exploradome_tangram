@@ -3,17 +3,15 @@ import os
 import cv2
 import imutils
 
-def preprocess_img(img, left_side=True, crop = True, sensitivity_to_light=50):
+def preprocess_img(img, side=None, crop = True, sensitivity_to_light=50):
     '''
-    this function takes a cv image as input, calls the resize function, crops the image to keep only the board, 
-    chooses the left / right half of the board or the full board if the child is playing alone, 
-    and eventually finds the largest dark shape
+    this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
     =========
 
     Parameters : 
 
     img = OpenCV image
-    left_side = process either left/right side or full frame.  - True by default
+    side = process either left/right side or full frame.  - True by default
     crop = decides if image needs cropping - set crop to False when processing dataset images, they are already cut
     sensitivity_to_light = parameter to turn the background black
 
@@ -23,13 +21,12 @@ def preprocess_img(img, left_side=True, crop = True, sensitivity_to_light=50):
     img = resize(img).copy()
 
     if crop :
-        if left_side is None:
-            img = img[0:-50, 55:-100] # if child plays alone
-        elif not left_side :
-            img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the right half of the board
-        else :
+        if side == "left":
             img = img[0:int(img.shape[0]),int(img.shape[1]/2):] # keep only the left half of the board
-
+        elif side == "right" :
+            img = img[0:int(img.shape[0]),0:int(img.shape[1]/2)] # keep only the right half of the board
+        else:
+            img = img[0:-50, 55:-100] # get full frame, if child plays alone  
     
     # get the largest shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # binarize img
@@ -42,6 +39,7 @@ def preprocess_img(img, left_side=True, crop = True, sensitivity_to_light=50):
 
 def resize(img, percent=20):
     '''
+
     this function takes a cv image as input and resizes it. 
     The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
     the secondary objective is to speed up processing.
@@ -50,10 +48,10 @@ def resize(img, percent=20):
 
     Parameters : 
 
-    img : OpenCV image
-    percent : the percentage of the scaling
+    img : OpenCV image  
+    percent : the percentage of the scaling  
 
-    author : @BasCR-hub
+    author : @BasCR-hub  
     '''
     scale_percent = percent # percent of original size
     width = int(img.shape[1] * scale_percent / 100)

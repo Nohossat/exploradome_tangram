@@ -66,7 +66,7 @@ def get_predictions(image, hu_moments, target, side, crop = True):
     """
 
     # Our operations on the frame come here
-    cnts, img = preprocess_img(image, left_side=side, crop = crop)
+    cnts, img = preprocess_img(image, side=side, crop = crop)
     HuMo = np.hstack(find_moments(cnts))
 
     # get distances

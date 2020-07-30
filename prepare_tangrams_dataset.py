@@ -25,14 +25,11 @@ def save_moments(images):
     """
     compute moments / hu moments for all images in our dataset
 
-    =========
-
     Parameters : 
 
     images : dict with images names and paths
 
     ========
-
     Return : save moments and hu_moments into CSV files and return them as Pandas dataframe
 
     author : @Nohossat
@@ -44,7 +41,7 @@ def save_moments(images):
     for image_name, image_path in images.items():
         img_cv = cv2.imread(image_path)
 
-        cnts, img = preprocess_img(img_cv, split=False)
+        cnts, img = preprocess_img(img_cv, crop=False)
         # display_contour(cnts, img) - for testing purposes
 
         hu_moments.append(find_moments(cnts, image_name))
