@@ -28,3 +28,6 @@ Keywords : Hu Moments, distances
 ### Version control
 - [ ] ecriture du readme - TBD
 - [ ] ré-organisation des fichiers dans le GitHub - Nohossat
+
+
+[Lien Google Drive](https://drive.google.com/drive/folders/1pmuPaserBOOIrdrdmM8uy592v4ylJlHx?usp=sharing)
