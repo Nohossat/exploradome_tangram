@@ -12,28 +12,21 @@ import imutils
 import pandas as pd
 import os
  
-import sys
-sys.path.insert(0, '/exploradome_tangram-numpy-team-4')
-
-import moments.py
+from ..moments import *
 
 #test returns the shape's Hu Moments
 def find_moments():
-    os.path.exists(dirname), "the directory doesn't exist"
+     assert find_moments(cnts, 0, 1) == 
+    
 
-#test moments for all images in our dataset
-def save_moments_test():
-    os.path.exists(dirname), "the directory doesn't exist"
-
-#test the main algorithm on 1 image
-def get_distance_img_test(image):
-
-#test get distances
-def read_video_test(video=False):
+def get_predictions(image, hu_moments, target, side, crop = True):
+    # test the probabilities to belong to each class in descending order
+   assert
+'''
     #verification de path of vidéo
     if __name__ == '__main__':
     #test distance
-    get_distance_img_test('cygne)
+    get_distance_img_test('cygne)'''
 
 
 
