@@ -35,6 +35,7 @@ def preprocess_img(img, side=None, crop = True, sensitivity_to_light=50):
     thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]  # ??
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts) # we need the contours to compute Hu moments
+    # display_contour(cnts, thresh) # for testing purposes
     return cnts, img
 
 def resize(img, percent=20):

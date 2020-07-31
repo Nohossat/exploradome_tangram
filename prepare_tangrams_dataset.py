@@ -13,15 +13,17 @@ def get_files(directory = DATA_PATH + '/tangrams'):
     author : @Nohossat
     """
     images = []
-    dirname = directory
-    assert os.path.exists(dirname), "the directory doesn't exist"
+    assert os.path.exists(directory), "the directory doesn't exist"
 
-    for file in os.listdir(dirname):
-        filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
-        if file.endswith(".jpg"):
-            pattern = re.compile(r"[a-zA-Z]+") # in case there is any number or underscore in the name
-            label = pattern.match(filename).group()
-            images.append((label, os.path.join(dirname, file)))
+    for folder, sub_folders, files in os.walk(directory):
+        for file in files:
+            filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
+            file_path = os.path.join(folder, file)
+            if file.endswith((".jpg", ".png")) and not file.startswith('frame'):
+                pattern = re.compile(r"[a-zA-Z]+") # in case there is any number or underscore in the name
+                label = pattern.match(filename).group()
+                images.append((label, file_path))
+
     return images
 
 def save_moments(images):
@@ -60,5 +62,7 @@ def save_moments(images):
     
 
 if __name__ == "__main__":
-    images = get_files()
-    print(save_moments(images))
+    path = "/Users/nohossat/Documents/exploradome_videos/TangrIAm dataset"
+    images = get_files(directory=path)
+    print(len(images))
+    # print(save_moments(images))

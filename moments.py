@@ -30,19 +30,23 @@ def find_moments(cnts, filename=None, hu_moment = True):
     lst_moments = [cv2.moments(c) for c in cnts] # retrieve moments of all shapes identified
     lst_areas = [i["m00"] for i in lst_moments] # retrieve areas of all shapes
     
-    max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
+    try : 
+        max_idx = lst_areas.index(max(lst_areas)) # select shape with the largest area
 
-    if hu_moment: # if we want the Hu moments
-        HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
+        if hu_moment: # if we want the Hu moments
+            HuMo = cv2.HuMoments(lst_moments[max_idx]) # grab humoments for largest shape
+            if filename:
+                HuMo = np.append(HuMo, filename)
+            return HuMo
+
+        # if we want to get the moments
+        Moms = lst_moments[max_idx] 
         if filename:
-            HuMo = np.append(HuMo, filename)
-        return HuMo
-
-    # if we want to get the moments
-    Moms = lst_moments[max_idx] 
-    if filename:
-        Moms['target'] = filename
-    return Moms
+            Moms['target'] = filename
+        return Moms
+    except Exception as e:
+        print(e)
+        return []
 
 def get_predictions(image, hu_moments, target, side=None, crop = True):
     """
@@ -67,7 +71,13 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
 
     # Our operations on the frame come here
     cnts, img = preprocess_img(image, side=side, crop = crop)
-    HuMo = np.hstack(find_moments(cnts))
+    HuMo = find_moments(cnts)
+
+    if len(HuMo) == 0 : 
+        print(img.shape, cnts) # the preprocessing makes the image all black, we can have any contour
+        return None
+
+    HuMo = np.hstack(HuMo)
 
     # get distances
     dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
