@@ -15,7 +15,7 @@ import os
 from ..processing import *
 
 #test if get images is in jpg format
-def get_files_test():
+def test_get_files():
     dicto = {'bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'martaeu.jpg', 'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg'
     }
     assert get_files() == dicto
@@ -31,11 +31,11 @@ except IOError:
     # verification extension of file *.img"""
 
 #test cv image and resizes it. 
-def resize_test():
+def test_resize():
     img_test.shape = img.shape
     assert resize_test.shape() == img_test.shape/5
 
 #test the contour of the image
-def display_contour(cnts, img):
+def test_display_contour(cnts, img):
     os.path.exists(dirname), "the directory doesn't exist"
     

@@ -5,10 +5,12 @@
 import pytest
 from ..prepare_tangrams_dataset import *
 
-def get_files_test():
-    #test a dict with the image_name and the path of all images in tangrams folder
-    assert 
+#test if get images is in jpg format
+def test_get_files():
+    dicto = {'bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'martaeu.jpg', 'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg'
+    }
+    assert get_files() == dicto
 
-def save_moments()
+def test_save_moments()
 # test moments and hu_moments into CSV files and return them as Pandas dataframe
     assert

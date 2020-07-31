@@ -9,14 +9,14 @@ import pytest
 from ..distances import *
 
 #test of distance humoment1
-def dist_humoment1_test():
-    assert dist_humoment1(0.026322267294741648, 0.0027161374010481088) == 330.179238664131
+def test_dist_humoment1():
+    assert dist_humoment1(0.026322267294741648, 0.0027161374010481088) == 330.17923866413116, 'distance_humoment1 not working'
 
 #test of distance humoment2
-def dist_humoment2_test():
-    assert dist_humoment2(0.026322267294741648, 0.0027161374010481088) == 0.0236061298936935
+def test_dist_humoment2():
+    assert dist_humoment2(0.026322267294741648, 0.0027161374010481088) == 0.02360612989369354, 'distance_humoment2 not working'
 
 #test of distance humoment3
-def dist_humoment3_test():
-    assert dist_humoment3(0.026322267294741648, 0.0027161374010481088) == 8.69106617529156
+def test_dist_humoment3():
+    assert dist_humoment3(0.026322267294741648, 0.0027161374010481088) == 8.691066175291558, 'distance_humoment3 not working'
     #message erreur, commentaire
