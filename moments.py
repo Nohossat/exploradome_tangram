@@ -76,6 +76,7 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
 
     # get probabilities
     dist_labelled['proba'] = round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
+    probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
     
-    return dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
+    return probas.reset_index(drop=True)
 
