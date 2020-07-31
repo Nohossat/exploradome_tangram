@@ -2,23 +2,26 @@ from processing import preprocess_img, display_contour
 from moments import find_moments
 import pandas as pd
 import os
+import re
 import cv2
 
 DATA_PATH = 'data/'
 
-def get_files():
+def get_files(directory = DATA_PATH + '/tangrams'):
     """
     get a dict with the image_name and the path of all images in tangrams folder
     author : @Nohossat
     """
-    images = {}
-    dirname = DATA_PATH + '/tangrams'
+    images = []
+    dirname = directory
     assert os.path.exists(dirname), "the directory doesn't exist"
 
     for file in os.listdir(dirname):
         filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
         if file.endswith(".jpg"):
-            images[filename] = os.path.join(dirname, file)
+            pattern = re.compile(r"[a-zA-Z]+") # in case there is any number or underscore in the name
+            label = pattern.match(filename).group()
+            images.append((label, os.path.join(dirname, file)))
     return images
 
 def save_moments(images):
@@ -38,7 +41,7 @@ def save_moments(images):
     hu_moments = []
     moments = []
 
-    for image_name, image_path in images.items():
+    for image_name, image_path in images:
         img_cv = cv2.imread(image_path)
 
         cnts, img = preprocess_img(img_cv, crop=False)
@@ -58,4 +61,4 @@ def save_moments(images):
 
 if __name__ == "__main__":
     images = get_files()
-    save_moments(images)
+    print(save_moments(images))

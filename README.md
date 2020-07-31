@@ -31,8 +31,11 @@ We compare a video with our dataset. We need different sequences with a clear so
 - [x] utiliser les sommets pour déterminer si on peut calculer les probabilités - non significatif
 - [ ] utiliser l'aire globale du tangram pour améliorer les prédictions - Bastien 
 - [x] écriture des fonctions de calcul de distances
-- [ ] convertir distances en probabilités - Gauthier
+- [x] convertir distances en probabilités - Gauthier
 - [ ] calcul du périmètre pour améliorer les prédictions - Nicolas
+- [ ] identifier le plateau de jeu - Nicolas
+- [ ] recherche de fonctions pour le traitement des mains - Bastien
+- [ ] récupération des formes géométriques - Gautier
 
 ### Prédictions
 - [x] affichage des prédictions en temps réel
@@ -40,9 +43,10 @@ We compare a video with our dataset. We need different sequences with a clear so
 ### Tests
 - [ ] tests unitaires - Renata
 - [x] stratégie de test
-- [ ] optimisation du code - Nohossat
+- [x] optimisation du code
 - [ ] découpage des videos - Nohossat
-- [ ] tests d'intégration - TBD
+- [ ] tests d'intégration - Renata & Nohossat
+- [ ] récupération des métriques - Renata & Nohossat
 
 ### Version control
 - [ ] ecriture du readme - TBD
