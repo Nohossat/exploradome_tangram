@@ -5,7 +5,10 @@ import pandas as pd
 from moments import get_predictions
 from prepare_tangrams_dataset import get_files
 
+
+
 # main application
+# new comment by Nohossat
 
 def tangram_game(side, crop, video=0, image = False):
     """
