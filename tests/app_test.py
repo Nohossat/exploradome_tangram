@@ -5,6 +5,6 @@
 import pytest
 from ..app import *
 
-def tangram_game()
+def test_tangram_game()
 # test the probabilities of the image / frame 
    assert

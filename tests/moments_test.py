@@ -15,11 +15,11 @@ import os
 from ..moments import *
 
 #test returns the shape's Hu Moments
-def find_moments():
+def test_find_moments():
      assert find_moments(cnts, 0, 1) == 
     
 
-def get_predictions(image, hu_moments, target, side, crop = True):
+def test_get_predictions(image, hu_moments, target, side, crop = True):
     # test the probabilities to belong to each class in descending order
    assert
 '''
