@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import imutils
 import pandas as pd
+import os
 from moments import get_predictions
 from prepare_tangrams_dataset import get_files
 
@@ -10,7 +11,7 @@ from prepare_tangrams_dataset import get_files
 # main application
 # new comment by Nohossat
 
-def tangram_game(side, crop, video=0, image = False):
+def tangram_game(crop, side=None, video=0, image=False):
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
@@ -36,9 +37,10 @@ def tangram_game(side, crop, video=0, image = False):
 
     # compare image with dataset images
     if image :
-        images = get_files()
-        image = cv2.imread(images[image])
-        print(get_predictions(image, hu_moments, target, side = side, crop = crop))
+        assert os.path.exists(image), "the image doesn't exist"
+        img_cv = cv2.imread(image)
+        predictions = get_predictions(img_cv, hu_moments, target, side = side, crop = crop)
+        return predictions
 
     # compare video frames with dataset images
     if not isinstance(video, bool):
@@ -46,7 +48,8 @@ def tangram_game(side, crop, video=0, image = False):
 
         while(cap.isOpened()):
             ret, image = cap.read() # Capture frame-by-frame
-            print(get_predictions(image, hu_moments, target, side = side, crop = crop))
+            predictions = get_predictions(image, hu_moments, target, side = side, crop = crop)
+            print(predictions)
 
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 break
@@ -56,4 +59,4 @@ def tangram_game(side, crop, video=0, image = False):
         cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    tangram_game(video=False, image = 'cygne', side="left", crop=False)
+    print(tangram_game(image = 'data/tangrams/cygne.jpg', crop=False))

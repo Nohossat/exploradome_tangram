@@ -44,7 +44,7 @@ def find_moments(cnts, filename=None, hu_moment = True):
         Moms['target'] = filename
     return Moms
 
-def get_predictions(image, hu_moments, target, side, crop = True):
+def get_predictions(image, hu_moments, target, side=None, crop = True):
     """
     compare moments of a frame with the hu moments of our dataset images  
 
@@ -60,7 +60,7 @@ def get_predictions(image, hu_moments, target, side, crop = True):
 
     ========
 
-    Return : print the probabilities to belong to each class in descending order
+    Return : print the probabilities to belong to each class in descending order (Pandas DataFrame)
 
     author : @Nohossat
     """
@@ -76,5 +76,6 @@ def get_predictions(image, hu_moments, target, side, crop = True):
 
     # get probabilities
     dist_labelled['proba'] = round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
-    print(dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']])
+    
+    return dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
 
