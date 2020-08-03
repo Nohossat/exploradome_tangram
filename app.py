@@ -3,8 +3,8 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
-from moments import get_predictions
-from prepare_tangrams_dataset import get_files
+from .moments import get_predictions
+from .prepare_tangrams_dataset import get_files
 
 
 """

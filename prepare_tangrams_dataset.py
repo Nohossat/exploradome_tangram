@@ -1,5 +1,5 @@
-from processing import preprocess_img, display_contour
-from moments import find_moments
+from .processing import preprocess_img, display_contour
+from .moments import find_moments
 import pandas as pd
 import os
 import re

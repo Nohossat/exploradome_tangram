@@ -3,8 +3,8 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
-from distances import *
-from processing import *
+from .distances import *
+from .processing import *
 
 def find_moments(cnts, filename=None, hu_moment = True):
     '''
@@ -43,6 +43,8 @@ def find_moments(cnts, filename=None, hu_moment = True):
         Moms = lst_moments[max_idx] 
         if filename:
             Moms['target'] = filename
+            Moms = np
+            HuMo = np.append(HuMo, filename)
         return Moms
     except Exception as e:
         print(e)

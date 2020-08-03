@@ -28,6 +28,7 @@ def get_nb_corners(img):
     return len(corners)
 
 
+
 """
 Results nb of corners
 bol = 12

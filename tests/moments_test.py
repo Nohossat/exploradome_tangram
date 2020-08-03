@@ -15,20 +15,20 @@ import os
 from ..moments import *
 
 #test returns the shape's Hu Moments
-def test_find_moments():
-     assert find_moments(cnts, filename=None, hu_moment = True) ==  np.append(HuMo, filename), 'Moment is not correct'
+def test_find_humoments():
+     img = '../data/tangrams/bateau.jpg'
+     img_cv = cv2.imread(img)
+     cnts, img = preprocess_img(img_cv, crop=False)
+     humoments = find_moments(cnts, filename = 'bateau', hu_moment = True)
+     assert humoments.shape == (8,) , 'Humoment is not correct'
     
 
-def test_get_predictions():
-    # test the probabilities to belong to each class in descending order
-   assert get_predictions(image, hu_moments, target, side=None, crop = True) == probas.reset_index(drop=True) , 'Predictions is not correct'
-'''
-    #verification de path of vidéo
-    if __name__ == '__main__':
-    #test distance
-    get_distance_img_test('cygne)'''
-
-
+def test_find_moments():
+     img = '../data/tangrams/bateau.jpg'
+     img_cv = cv2.imread(img)
+     cnts, img = preprocess_img(img_cv, crop=False)
+     moments = find_moments(cnts, filename = 'bateau', hu_moment = False)
+     assert len(moments) == 25 , 'Moment is not correct'
 
 
     

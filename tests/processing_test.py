@@ -15,14 +15,17 @@ import os
 from ..processing import *
 
 def test_preprocess_img():
-    assert preprocess_img(img, side=None, crop = True, sensitivity_to_light=50)== img[0:int(img.shape[0]),int(img.shape[1]/2):]
+    img = '../data/tangrams/bateau.jpg'
+    img_cv = cv2.imread(img)
+    result = preprocess_img(img_cv, side=None, crop = False)
+    assert isinstance(result, tuple)
+    assert isinstance(result[0], list)
+    assert isinstance(result[1], np.ndarray)
 
 #test cv image and resizes it. 
 def test_resize():
-    img_test.shape = img.shape
-    assert resize(img, percent=20) == img_test.shape/5, 'image is too big'
-
-#test the contour of the image
-def test_display_contour():
-    assert test_display_contour(cnts, img) == os.path.exists(dirname), "the directory doesn't exist"
-    
+    img = '../data/tangrams/bateau.jpg'
+    img_cv = cv2.imread(img)
+    image_resize = resize(img_cv)
+    assert image_resize.shape[0:2] == tuple(int(dim / 5) for dim in img_cv.shape[0:2]), 'image is too big'
+ 

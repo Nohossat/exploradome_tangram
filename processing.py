@@ -77,7 +77,7 @@ def display_contour(cnts, img):
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
     cv2.imshow("Image", img)
     cv2.waitKey(0)
-
+    
 
 if __name__ == "__main__":
     # testing the contour of the image => see with Renata how to include it to integration tests
