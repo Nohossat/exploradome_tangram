@@ -92,7 +92,7 @@ def tangram_game_live_test(crop=True, side=None, video=0):
         ret, image = cap.read() # Capture frame-by-frame
         predictions = get_predictions(image, hu_moments, target, side = side, crop = crop)
 
-        image = imutils.resize(image, width=1200)
+        image = imutils.resize(image, width=1300)
         
         # add prediction on the frame
         font = cv2.FONT_HERSHEY_SIMPLEX
@@ -109,11 +109,10 @@ def tangram_game_live_test(crop=True, side=None, video=0):
         # add latest predictions
         latest_predictions.append(predictions.loc[0, 'target'])
 
-        if len(latest_predictions) > 250:
+        if len(latest_predictions) > 190:
             latest_predictions.remove(latest_predictions[0]) # get only the 390 latest predictions
 
-        if latest_predictions.count(latest_predictions[0]) == 250: # if the latest predictions are equal, we check if the machine found the right label
-            print("done with prediction", latest_predictions[0])
+        if latest_predictions.count(latest_predictions[0]) == 190: # if the latest predictions are equal, we check if the machine found the right label
             break
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -129,4 +128,7 @@ if __name__ == '__main__':
     path = "data/tangrams/cygne.jpg"
     path2 = "/Users/nohossat/Documents/exploradome_videos/TangrIAm dataset/bol/bol.11.jpg"
     # print(tangram_game(image = path2, crop=False))
-    # print(tangram_game(video=0, side="left"))
+
+    # multi-processing here
+    print(tangram_game(video=0, side="left"))
+    print(tangram_game(video=0, side="right"))
