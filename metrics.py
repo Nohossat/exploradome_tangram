@@ -21,6 +21,7 @@ def get_classification_report_pics(dataset_path=None):
     else :
         images = get_files(directory=dataset_path)
 
+    # for each image, get prediction by our algorithm
     for label, img_path in images: 
         predictions = tangram_game(image = img_path, crop=False)
 
@@ -30,9 +31,11 @@ def get_classification_report_pics(dataset_path=None):
         y_true.append(label)
         y_pred.append(predictions.loc[0, 'target'])
 
+    # get metrics
     conf_matrix = confusion_matrix(y_true, y_pred, labels=classes)
     report = classification_report(y_true, y_pred, target_names=classes)
 
+    # plot confusion matrix
     sns.heatmap(conf_matrix, annot = True, xticklabels=classes, yticklabels=classes)
     plt.show()
 
