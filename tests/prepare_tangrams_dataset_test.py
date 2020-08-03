@@ -13,4 +13,4 @@ def test_get_files():
 
 def test_save_moments()
 # test moments and hu_moments into CSV files and return them as Pandas dataframe
-    assert
+    assert save_moments(images) == hu_moments, 'Moments are not correct'

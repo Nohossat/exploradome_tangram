@@ -14,28 +14,15 @@ import os
  
 from ..processing import *
 
-#test if get images is in jpg format
-def test_get_files():
-    dicto = {'bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'martaeu.jpg', 'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg'
-    }
-    assert get_files() == dicto
-    
-#test a cv image and resize operations
-#def preprocess_img_test():
-#    from PIL import Image
-#try:
- """   im=Image.open(filename)
-    # do stuff
-except IOError:
-    # filename not an image file
-    # verification extension of file *.img"""
+def test_preprocess_img():
+    assert preprocess_img(img, side=None, crop = True, sensitivity_to_light=50)== img[0:int(img.shape[0]),int(img.shape[1]/2):]
 
 #test cv image and resizes it. 
 def test_resize():
     img_test.shape = img.shape
-    assert resize_test.shape() == img_test.shape/5
+    assert resize(img, percent=20) == img_test.shape/5, 'image is too big'
 
 #test the contour of the image
-def test_display_contour(cnts, img):
-    os.path.exists(dirname), "the directory doesn't exist"
+def test_display_contour():
+    assert test_display_contour(cnts, img) == os.path.exists(dirname), "the directory doesn't exist"
     
