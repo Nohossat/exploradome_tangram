@@ -43,8 +43,6 @@ def find_moments(cnts, filename=None, hu_moment = True):
         Moms = lst_moments[max_idx] 
         if filename:
             Moms['target'] = filename
-            Moms = np
-            HuMo = np.append(HuMo, filename)
         return Moms
     except Exception as e:
         print(e)
@@ -76,7 +74,7 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
     HuMo = find_moments(cnts)
 
     if len(HuMo) == 0 : 
-        print(img.shape, cnts) # the preprocessing makes the image all black, we can have any contour
+        print(img.shape, cnts) # the preprocessing makes the image all black, we can't have any contour
         return None
 
     HuMo = np.hstack(HuMo)

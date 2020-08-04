@@ -3,9 +3,11 @@ Tangram form detection from live video stream
 
 ## Approach
 
-TBD  
+Calculation distances geometrics
 Keywords : Hu Moments, distances
 
+## Resultat
+The metrics, 
 ## Testing
 
 ### Unit Tests
@@ -14,30 +16,16 @@ We test each function individually
 
 ### Integration Tests
 
+Dynamic tests
+
 #### Static tests
-We compare an image with our dataset. We need several images by class.
+We compare every image with our dataset. We need several images by class.
 
 #### Video tests
 We compare a video with our dataset. We need different sequences with a clear solution
 
 
-## TODOS
-
-### Récupération des caractéristiques des images
-- [x] fonction pour récupérer les Hu moments
-- [x] récupération des Hu moments dataset tangrams
-- [x] processing des images pour récupérer leur contour
-- [x] récupérer le nombre de sommets dans une image
-- [x] utiliser les sommets pour déterminer si on peut calculer les probabilités - non significatif
-- [ ] utiliser l'aire globale du tangram pour améliorer les prédictions - Bastien 
-- [x] écriture des fonctions de calcul de distances
-- [x] convertir distances en probabilités - Gauthier
-- [ ] calcul du périmètre pour améliorer les prédictions - Nicolas
-- [ ] identifier le plateau de jeu - Nicolas
-- [ ] recherche de fonctions pour le traitement des mains - Bastien
-- [ ] récupération des formes géométriques - Gautier
-
-### Prédictions
+### Préditions
 - [x] affichage des prédictions en temps réel
 
 ### Tests

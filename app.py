@@ -12,7 +12,7 @@ main entry in the application: tangram_game
 you can do live testing with the tangram_game_live_test
 """
 
-def tangram_game(crop=True, side=None, video=0, image=False):
+def tangram_game(hu_moments_dataset='data/hu_moments.csv', crop=True, side=None, video=0, image=False):
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
@@ -33,7 +33,7 @@ def tangram_game(crop=True, side=None, video=0, image=False):
     """
 
     # get dataset
-    hu_moments = pd.read_csv('data/hu_moments.csv')
+    hu_moments = pd.read_csv(hu_moments_dataset)
     target = hu_moments.iloc[:, -1]
 
     # compare image with dataset images
