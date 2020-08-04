@@ -8,10 +8,14 @@ from ..prepare_tangrams_dataset import *
 #test if get images is in jpg format
 
 def test_get_files():
-    dicto = {'bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'martaeu.jpg', 'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg'
-    }
-    assert get_files() == dicto
+    dicto = [('bateau', '../data/tangrams\\bateau.jpg'), ('bateau', '../data/tangrams\\bateau_1.jpg'), ('bol', '../data/tangrams\\bol.jpg'), ('chat', '../data/tangrams\\chat.jpg'), ('coeur', '../data/tangrams\\coeur.jpg'), ('cygne', '../data/tangrams\\cygne.jpg'), ('lapin', '../data/tangrams\\lapin.jpg'), ('marteau', '../data/tangrams\\marteau.jpg'), ('montagne', '../data/tangrams\\montagne.jpg'), ('pont', '../data/tangrams\\pont.jpg'), ('tortue', '../data/tangrams\\tortue.jpg')]
+    assert get_files(directory='../data/tangrams') == dicto
 
 def test_save_moments():
 # test moments and hu_moments into CSV files and return them as Pandas dataframe
-    assert save_moments(images) == hu_moments, 'Moments are not correct'
+    images = get_files(directory='../data/tangrams') 
+    humoments, moments = save_moments(images, directory = '../data')
+    assert isinstance(humoments, pd.core.frame.DataFrame), 'Humoments are not correct'
+    assert isinstance(moments, pd.core.frame.DataFrame), 'Moments are not correct'
+    assert os.path.exists('../data/hu_moments.csv')
+    assert os.path.exists('../data/moments.csv')
