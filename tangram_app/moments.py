@@ -76,7 +76,7 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
     HuMo = find_moments(cnts)
 
     if len(HuMo) == 0 : 
-        return None # the image can't be processed, so empty predictions
+        return None, None # the image can't be processed, so empty predictions
 
     # with the hu_moments we can get the predictions
     HuMo = np.hstack(HuMo)
