@@ -121,3 +121,5 @@ if __name__ == "__main__":
     img_cv = cv2.imread('data/tangrams/renard.jpg')
     cnts, img = preprocess_img(img_cv, crop=False)
     display_contour(cnts, img)
+
+#test
