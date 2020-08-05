@@ -1,10 +1,25 @@
 # exploradome_tangram
 Tangram form detection from live video stream
 
-## Approach
+## Installation and Usage
 
+OpenCV (Open Computer Vision Library)
+Numpy
+Imutils
+
+## Approach
+Find the best accuracy for the model 
 Calculation distances geometrics
 Keywords : Hu Moments, distances
+
+## Configuration
+Data 
+- tangrams - image classification datasets (from video_to_img)
+- hu_moments.csv
+- moments
+Tests 
+- tests unitaire
+
 
 ## Resultat
 The metrics, 
@@ -23,23 +38,3 @@ We compare every image with our dataset. We need several images by class.
 
 #### Video tests
 We compare a video with our dataset. We need different sequences with a clear solution
-
-
-### Préditions
-- [x] affichage des prédictions en temps réel
-
-### Tests
-- [ ] tests unitaires - Renata
-- [x] stratégie de test
-- [x] optimisation du code
-- [ ] découpage des videos - Nohossat
-- [ ] tests d'intégration - Renata & Nohossat
-- [ ] récupération des métriques - Renata & Nohossat
-
-### Version control
-- [ ] ecriture du readme - TBD
-- [x] ré-organisation des fichiers dans le GitHub - Nohossat
-
-### Dataset avec les tangrams
-
-[Dataset](https://drive.google.com/drive/folders/1pmuPaserBOOIrdrdmM8uy592v4ylJlHx?usp=sharing)
