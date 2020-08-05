@@ -24,7 +24,7 @@ def get_classification_report_pics(dataset_path=None):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = tangram_game(image = img_path, crop=False)
+        predictions = tangram_game(image = img_path)
 
         if predictions is None:
             continue
@@ -67,7 +67,7 @@ def get_classification_report_videos(video_folder):
     
     i = 0
     for label, video_path in videos:
-        prediction = tangram_game_live_test(crop=True, side=sides[i], video=video_path)
+        prediction = tangram_game_live_test(side=sides[i], video=video_path)
         i += 1
 
         if prediction == label:
