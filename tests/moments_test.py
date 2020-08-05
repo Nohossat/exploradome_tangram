@@ -44,7 +44,8 @@ def test_get_predictions():
      img_cv = cv2.imread(img)
      humoments = pd.read_csv('data/hu_moments.csv')
      target = humoments.iloc[:, -1]
-     probalitity = get_predictions(img_cv, humoments, target)
+     probalitity, cnts = get_predictions(img_cv, humoments, target)
      assert isinstance(probalitity, pd.core.frame.DataFrame), 'Predictions should be dataframe'
+     assert isinstance(cnts, list), 'Contours should be list'
      assert probalitity.loc[0, 'target'] == 'bateau', 'Predictions should be bateau'
     
