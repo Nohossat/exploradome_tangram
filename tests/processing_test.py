@@ -1,7 +1,4 @@
-
 """
-
-
 @author: Renata
 """
 
@@ -11,31 +8,27 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
+import re
  
-from ..processing import *
+from tangram_app.processing import *
 
-#test if get images is in jpg format
-def test_get_files():
-    dicto = {'bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'martaeu.jpg', 'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg'
-    }
-    assert get_files() == dicto
-    
-#test a cv image and resize operations
-#def preprocess_img_test():
-#    from PIL import Image
-#try:
- """   im=Image.open(filename)
-    # do stuff
-except IOError:
-    # filename not an image file
-    # verification extension of file *.img"""
+def test_preprocess_img():
+    img = 'data/tangrams/bateau_4_right.jpg'
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
+    img_cv = cv2.imread(img)
+    result = preprocess_img(img_cv, side=side)
+    assert isinstance(result, list)
 
 #test cv image and resizes it. 
 def test_resize():
-    img_test.shape = img.shape
-    assert resize_test.shape() == img_test.shape/5
-
-#test the contour of the image
-def test_display_contour(cnts, img):
-    os.path.exists(dirname), "the directory doesn't exist"
-    
+    img = 'data/tangrams/bateau_4_right.jpg'
+    # get size to analyze from image path
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
+    img_cv = cv2.imread(img)
+    image_resize = resize(img_cv, side=side)
+    assert image_resize.shape[0:2] == (494, 360), 'image is too big'
+ 

@@ -1,5 +1,5 @@
-from processing import preprocess_img, display_contour
-from moments import find_moments
+from .processing import preprocess_img, display_contour
+from .moments import find_moments
 import pandas as pd
 import os
 import re
@@ -26,7 +26,7 @@ def get_files(directory = DATA_PATH + '/tangrams'):
 
     return images
 
-def save_moments(images):
+def save_moments(images, directory):
     """
     compute moments / hu moments for all images in our dataset
 
@@ -46,23 +46,26 @@ def save_moments(images):
     for image_name, image_path in images:
         img_cv = cv2.imread(image_path)
 
-        cnts, img = preprocess_img(img_cv, crop=False)
-        # display_contour(cnts, img) - for testing purposes
+        pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+        result = pattern.search(image_path)
+        side = result.group(2)
+
+        cnts = preprocess_img(img_cv, side=side)
 
         hu_moments.append(find_moments(cnts, image_name))
         moments.append(find_moments(cnts, image_name, hu_moment=False))
 
         hu_moments_df = pd.DataFrame(hu_moments)
-        hu_moments_df.to_csv(DATA_PATH +'/hu_moments.csv', index=False)
+        hu_moments_df.to_csv(directory +'/hu_moments.csv', index=False)
 
         moments_df = pd.DataFrame(moments)
-        moments_df.to_csv(DATA_PATH + '/moments.csv', index=False)
+        moments_df.to_csv(directory + '/moments.csv', index=False)
 
-    return hu_moments, moments
+    return hu_moments_df, moments_df
     
 
 if __name__ == "__main__":
     path = "/Users/nohossat/Documents/exploradome_videos/TangrIAm dataset"
     images = get_files(directory=path)
     print(len(images))
-    # print(save_moments(images))
+    # print(save_moments(images, directory = DATA_PATH))
