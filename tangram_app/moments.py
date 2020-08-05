@@ -91,5 +91,5 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
     probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
     
     # sorted probabilities
-    return probas.reset_index(drop=True)
+    return probas.reset_index(drop=True), cnts
 
