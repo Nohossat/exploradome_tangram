@@ -6,11 +6,16 @@ In order to run this annotation tool, run 'main.py' file.
 
 ## Installation and Usage
 
-OpenCV (Open Computer Vision Library) - pip install opencv-python
-Numpy -  pip install numpy
-Imutils - pip install imutils
+OpenCV (Open Computer Vision Library) 
+Numpy 
+Imutils  
+```python
+pip install opencv-python
+pip install numpy
+pip install imutils
+```
 
-## Approach
+# Approach
 Find the best accuracy for the model 
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
