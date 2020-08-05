@@ -38,7 +38,7 @@ if __name__ == '__main__':
             # it is a video => live testing
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
             tangram_game_live_test(video=args.mode, side=args.side)
-        elif args.mode == 0: # webcam
+        elif int(args.mode) == 0: # webcam
             tangram_game_live_test(video=0, side=args.side)
         else :
             raise Exception("the mode isn't valid - pass a valid image/video path or a webcam stream")
