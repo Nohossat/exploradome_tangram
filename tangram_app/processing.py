@@ -16,12 +16,12 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     '''
 
     img = resize(img,side).copy()
-    image_blurred = blur(img,3)
+    image_blurred = blur(img,1)
     cnts = get_contours(image_blurred)
     image_triangles_squares = extract_triangles_squares(cnts, img)
     
 
-    blurred_triangles_squared = blur(image_triangles_squares, 7, sensitivity_to_light='ignore').copy()
+    blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
     return final_cnts
 
