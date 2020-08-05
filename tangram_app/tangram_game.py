@@ -105,7 +105,7 @@ def tangram_game_live_test(side=None, video=0):
             break
 
         predictions = get_predictions(image, hu_moments, target, side = side)
-        image = imutils.resize(image, width=1200)
+        # image = imutils.resize(image, width=1200)
         
         # add prediction on the frame
         if predictions is None:
