@@ -51,7 +51,8 @@ if __name__ == '__main__':
     if args.test:
         path = "data/test_images/bateau_1_right.jpg"
         img_cv = cv2.imread(path)
-        print(tangram_game(image=path, side="right", prepro=preprocess_img2))
+        preprocess_img2(img_cv, side="right")
+        # print(tangram_game(image=path, side="right", prepro=preprocess_img2))
         
 
     

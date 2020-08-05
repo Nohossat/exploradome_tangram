@@ -6,7 +6,7 @@ import imutils
 def detect_black_color(img):
     # img : OpenCV image
     BLACK_MIN = np.array([0, 0, 0])
-    BLACK_MAX = np.array([180, 255, 25])
+    BLACK_MAX = np.array([180, 255, 29])
 
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
