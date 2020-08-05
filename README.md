@@ -1,8 +1,6 @@
 # exploradome_tangram
 Tangram form detection from live video stream
 
-![travis_build_status](https://travis-ci.com/Nohossat/exploradome_tangram.svg?branch=master)
-
 ## Installation and Usage
 
 OpenCV (Open Computer Vision Library)
