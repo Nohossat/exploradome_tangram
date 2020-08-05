@@ -6,7 +6,7 @@ Created on Tue Jul 28 15:11:06 2020
 """
 import pytest
 
-from ..distances import *
+from tangram_app.distances import *
 
 #test of distance humoment1
 def test_dist_humoment1():

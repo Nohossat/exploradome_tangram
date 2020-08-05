@@ -46,8 +46,11 @@ def save_moments(images, directory):
     for image_name, image_path in images:
         img_cv = cv2.imread(image_path)
 
-        cnts, img = preprocess_img(img_cv, crop=False)
-        # display_contour(cnts, img) - for testing purposes
+        pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+        result = pattern.search(image_path)
+        side = result.group(2)
+
+        cnts = preprocess_img(img_cv, side=side)
 
         hu_moments.append(find_moments(cnts, image_name))
         moments.append(find_moments(cnts, image_name, hu_moment=False))

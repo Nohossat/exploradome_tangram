@@ -1,4 +1,4 @@
-from .app import tangram_game, tangram_game_live_test
+from .tangram_game import tangram_game, tangram_game_live_test
 from .prepare_tangrams_dataset import get_files
 import re
 import os
@@ -21,12 +21,16 @@ def get_classification_report_pics(dataset_path=None):
     else :
         images = get_files(directory=dataset_path)
 
+
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
         predictions = tangram_game(image = img_path, crop=False)
 
-        # if predictions is None:
-            # continue
+        if predictions is None:
+            continue
+
+        if label != predictions.loc[0, 'target']:
+            print(img_path, label, predictions.loc[0, 'target'])
 
         y_true.append(label)
         y_pred.append(predictions.loc[0, 'target'])
@@ -52,13 +56,14 @@ def get_classification_report_videos(video_folder):
 
     for folder, sub_folders, files in os.walk(video_folder):
         for file in files:
-            filename, file_extension = os.path.splitext(file) # we just want the filename to save the path
+            filename, file_extension = os.path.splitext(file) # we just want the filename to save the relative path of the video
             file_path = os.path.join(folder, file)
 
             if file.endswith(".mov"):
                 pattern = re.compile(r"[a-zA-Z]+") # in case there is any number or underscore in the name
                 label = pattern.match(filename).group()
                 videos.append((label, file_path))
+                print((label, file_path))
     
     i = 0
     for label, video_path in videos:
@@ -70,16 +75,6 @@ def get_classification_report_videos(video_folder):
 
         print(f'- label : {label}\n- prediction: {prediction}\n- correct_predictions: {correct_predictions}\n========\n')
 
-print(__name__)
-if __name__ == "__main__":
-
-    # static testing
-    path = "/Users/nohossat/Documents/exploradome_videos/TangrIAm dataset"
-    path2 = "/Users/nohossat/Documents/exploradome_videos/photos"
-    print(get_classification_report_pics(dataset_path=None))
-
-    # live testing
-    # get_classification_report_videos(video_folder="/Users/nohossat/Documents/exploradome_videos/videos/")
 
     
 

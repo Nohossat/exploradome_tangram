@@ -45,10 +45,9 @@ def find_moments(cnts, filename=None, hu_moment = True):
             Moms['target'] = filename
         return Moms
     except Exception as e:
-        print(e)
-        return []
+        return [] # predictions impossible
 
-def get_predictions(image, hu_moments, target, side=None, crop = True):
+def get_predictions(image, hu_moments, target, side=None, prepro=False):
     """
     compare moments of a frame with the hu moments of our dataset images  
 
@@ -60,7 +59,6 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
     hu_moments : dataset with the humoments of each class
     target : name of the classes
     side : which side should be analyzed - left / right / full image
-    crop : by default set to True, set to False, when testing
 
     ========
 
@@ -70,13 +68,17 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
     """
 
     # Our operations on the frame come here
-    cnts, img = preprocess_img(image, side=side, crop = crop)
+    if not prepro : #take default prepro
+        cnts = preprocess_img(image, side=side)
+    else : # special prepro
+        cnts = prepro(image, side=side)
+
     HuMo = find_moments(cnts)
 
     if len(HuMo) == 0 : 
-        print(img.shape, cnts) # the preprocessing makes the image all black, we can't have any contour
-        return None
+        return None, None # the image can't be processed, so empty predictions
 
+    # with the hu_moments we can get the predictions
     HuMo = np.hstack(HuMo)
 
     # get distances
@@ -88,5 +90,6 @@ def get_predictions(image, hu_moments, target, side=None, crop = True):
     dist_labelled['proba'] = round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
     probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
     
-    return probas.reset_index(drop=True)
+    # sorted probabilities
+    return probas.reset_index(drop=True), cnts
 

@@ -1,7 +1,4 @@
-
 """
-
-
 @author: Renata
 """
 
@@ -11,21 +8,27 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
+import re
  
-from ..processing import *
+from tangram_app.processing import *
 
 def test_preprocess_img():
-    img = '../data/tangrams/bateau.jpg'
+    img = 'data/tangrams/bateau_4_right.jpg'
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
     img_cv = cv2.imread(img)
-    result = preprocess_img(img_cv, side=None, crop = False)
-    assert isinstance(result, tuple)
-    assert isinstance(result[0], list)
-    assert isinstance(result[1], np.ndarray)
+    result = preprocess_img(img_cv, side=side)
+    assert isinstance(result, list)
 
 #test cv image and resizes it. 
 def test_resize():
-    img = '../data/tangrams/bateau.jpg'
+    img = 'data/tangrams/bateau_4_right.jpg'
+    # get size to analyze from image path
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
     img_cv = cv2.imread(img)
-    image_resize = resize(img_cv)
-    assert image_resize.shape[0:2] == tuple(int(dim / 5) for dim in img_cv.shape[0:2]), 'image is too big'
+    image_resize = resize(img_cv, side=side)
+    assert image_resize.shape[0:2] == (494, 360), 'image is too big'
  
