@@ -75,6 +75,19 @@ def get_classification_report_videos(video_folder):
 
         print(f'- label : {label}\n- prediction: {prediction}\n- correct_predictions: {correct_predictions}\n========\n')
 
+<<<<<<< HEAD:tangram_app/metrics.py
+=======
+print(__name__)
+if __name__ == "__main__":
+
+    # static testing
+    path = "/Users/nohossat/Documents/exploradome_videos/TangrIAm dataset"
+    path2 = "/Users/nohossat/Documents/exploradome_videos/photos"
+    print(get_classification_report_pics(dataset_path=None))
+
+    # live testing
+    # get_classification_report_videos(video_folder="/Users/nohossat/Documents/exploradome_videos/videos/")
+>>>>>>> 37f95fb54c97b8a72a4615be2a7f817ee13b6a96:metrics.py
 
     
 

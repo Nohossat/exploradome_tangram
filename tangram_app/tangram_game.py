@@ -5,7 +5,10 @@ import pandas as pd
 import os
 from .moments import get_predictions
 from .prepare_tangrams_dataset import get_files
+<<<<<<< HEAD:tangram_app/tangram_game.py
 import re
+=======
+>>>>>>> 37f95fb54c97b8a72a4615be2a7f817ee13b6a96:app.py
 
 
 """
@@ -13,7 +16,11 @@ main entry in the application: tangram_game
 you can do live testing with the tangram_game_live_test
 """
 
+<<<<<<< HEAD:tangram_app/tangram_game.py
 def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, image=False, prepro=False):
+=======
+def tangram_game(hu_moments_dataset='data/hu_moments.csv', crop=True, side=None, video=0, image=False):
+>>>>>>> 37f95fb54c97b8a72a4615be2a7f817ee13b6a96:app.py
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
