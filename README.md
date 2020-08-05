@@ -1,12 +1,60 @@
 # exploradome_tangram
-Tangram form detection from live video stream
+Tangram form detection from live video stream in the real time. 
+Intermediate stages crop, contrast
 
-## reste à faire
+In order to run this annotation tool, run 'main.py' file.
 
-- convertir distances en probabilités
-- optimisation du code
-- création des tests unitaires
-- affichage des prédictions en temps réel
-- élaborer stratégie de test : quels sont les éléments à tester ? combien d'éléments on prend en test ? métriques ?
-- minimisation du code
-- écriture du readme
+## Installation and Usage
+
+OpenCV (Open Computer Vision Library) - pip install opencv-python
+Numpy -  pip install numpy
+Imutils - pip install imutils
+
+## Approach
+Find the best accuracy for the model 
+Calculation distances geometrics by analyse of contours
+Keywords : Hu Moments, moments, distances
+
+## Configuration
+Data 
+- tangrams - image classification datasets (from video_to_img)
+- hu_moments.csv
+- moments
+Tests 
+- tests unitaire
+App.py 
+- main entry in the application: tangram_game 
+distances.py 
+- calcul the distances between of humoments
+find_corner.py
+- calcul of corners every image
+metrics.py
+- from a set of images, get global accuracy, precision, recall
+moments.py
+- this function returns the shape's Moments or Hu Moments
+- compare moments of a frame with the hu moments of our dataset images
+- print the probabilities to belong to each class in descending order (Pandas DataFrame)
+prepare_tangrams_dataset.py
+- compute moments / hu moments for all images in our dataset
+processing.py
+- this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
+## Resultat
+Two objectives:
+- detect one or two tangrams at the same time, in real time, having twelve different shapes
+- detect the parts of the tangram (triangle, square etc.)
+
+## Testing the metrics
+The code is tested with Pytest
+### Unit Tests
+
+We test each function individually
+
+### Integration Tests
+
+Dynamic tests
+
+#### Static tests
+We compare every image with our dataset. We need several images by class.
+
+#### Video tests
+We compare a video with our dataset. We need different sequences with a clear solution
