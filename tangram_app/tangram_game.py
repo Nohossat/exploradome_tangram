@@ -118,8 +118,9 @@ def tangram_game_live_test(side=None, video=0):
             prediction_proba = predictions.loc[0, 'proba']
             latest_predictions.append(prediction_label)
 
-            for c in cnts:
-                cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+            if cnts : 
+                for c in cnts:
+                    cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
         msg = f"Main proba : {prediction_label}"
 
