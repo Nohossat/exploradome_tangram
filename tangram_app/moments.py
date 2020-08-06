@@ -68,6 +68,10 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
     """
 
     # Our operations on the frame come here
+<<<<<<< HEAD:moments.py
+    cnts, img = preprocess_img(image, side=side, crop = crop)
+    HuMo = np.hstack(find_moments(cnts))
+=======
     if not prepro : #take default prepro
         cnts = preprocess_img(image, side=side)
     else : # special prepro
@@ -80,16 +84,23 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
 
     # with the hu_moments we can get the predictions
     HuMo = np.hstack(HuMo)
+>>>>>>> 7819ef5d13c73358fc33f06bd9cf88e1ecbe2752:tangram_app/moments.py
 
     # get distances
-    dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
+    dist = hu_moments.apply(lambda row : dist_humoment4(HuMo, row.values[:-1]), axis=1)
     dist_labelled = pd.concat([dist, target], axis=1)
     dist_labelled.columns = ['distance', 'target']
 
+<<<<<<< HEAD:moments.py
+    dist_labelled['proba'] =  round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
+    #dist_labelled['proba'] =  round(np.exp(1/dist_labelled['distance']) / np.sum(np.exp(1/dist_labelled['distance']),axis=0),3)
+    print(dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']])
+=======
     # get probabilities
     dist_labelled['proba'] = round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
     probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
     
     # sorted probabilities
     return probas.reset_index(drop=True), cnts
+>>>>>>> 7819ef5d13c73358fc33f06bd9cf88e1ecbe2752:tangram_app/moments.py
 
