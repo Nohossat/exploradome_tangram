@@ -46,9 +46,9 @@ if __name__ == '__main__':
         print(report)
 
     if args.test:
-        path = "data/test_images/tortue_5_right.jpg"
+        path = "data/test_images/bateau_1_right.jpg"
         img_cv = cv2.imread(path)
-        preprocess_img_2(img_cv, side="right")
+        preprocess_img_original(img_cv, side="right")
         # print(path)
         # print(tangram_game(image=path, side="right", prepro=False))
     

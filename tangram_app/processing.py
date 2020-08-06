@@ -21,12 +21,12 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     image_triangles_squares = extract_triangles_squares(cnts, img)
     blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
-    display_contour(final_cnts, img)
     return final_cnts
 
 def extract_triangles_squares(cnts, image):    
     cnts_output = []
     out_image = np.zeros(image.shape, image.dtype)
+
     for idx,cnt in enumerate(cnts):
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
@@ -99,17 +99,21 @@ def display_contour(cnts, img):
     """
     for c in cnts:
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
+
+    img = imutils.resize(img, width=1200)
     cv2.imshow("Image", img)
+    cv2.moveWindow('Image', 30, 30)
     cv2.waitKey(0)
 
 def preprocess_img_2(origin_img):
-    img = cv2.Canny(origin_img, 30,300)
+    img = cv2.Canny(origin_img, 100,300)
     img = cv2.threshold(img.copy(), 0, 255, cv2.THRESH_BINARY)[1]
     cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # for c in cnts:
     #     cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 2)
     cnts_output, triangle_squares_img = extract_triangles_squares_2(cnts,img)
-    
+    display_contour(cnts_output, img)
+
     return cnts_output
 
 def extract_triangles_squares_2(cnts, img):    
