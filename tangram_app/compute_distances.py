@@ -4,13 +4,13 @@ import cv2
 import imutils
 import math
 import pandas as pd
-from processing import preprocess_img
+from .processing import preprocess_img
 
 
 def detect_forme(cnts, image):
     cnts_output = []
-    for cnt in cnts:
 
+    for cnt in cnts:
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
 
@@ -162,33 +162,6 @@ def distance_formes(contours):
 
     return centers, perimeters
 
-# for mean of formes
-
-# def unique_centers(centers):
-#     centres_unique_form = {}
-
-#     for x, y in centers.items():
-#         center = [0, 0]
-#         for ele in y:
-#             i, j = ele
-#             center[0] += i
-#             center[1] += j
-#         centres_unique_form[x] = (
-#             int(center[0] / len(y)), int(center[1] / len(y)))
-#     return centres_unique_form
-
-
-# def distance_forme(centers):
-#     distances = {}
-#     for forme1, center1 in centers.items():
-#         for forme2, center2 in centers.items():
-#             if forme1 != forme2:
-#                 x1, y1 = center1
-#                 x2, y2 = center2
-#                 distances[forme1 + "-" +
-#                           forme2] = round(math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)), 2)
-#     return distances
-
 def ratio_distance(centers, perimeters):
     '''
     This function take in input an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
@@ -306,7 +279,7 @@ def img_to_sorted_dists(img_cv):
     '''
     It takes a img_cv in input, and returns a dictionnay of shape with distance ordered
     '''
-    cnts, img = preprocess_img(img_cv, crop=False)
+    cnts, img = preprocess_img(img_cv)
     cnts_form = detect_forme(cnts, img)
 
     image, contours = merge_tangram(img, cnts_form)
@@ -342,7 +315,7 @@ def create_all_types_distances(link):
     data.to_csv(link, sep=";")
 
 
-def rmse_distances(data, sorted_dists):
+def mse_distances(data, sorted_dists):
     mses = []
     for i in range(data.shape[0]):
         ligne = data.iloc[i]
@@ -366,21 +339,16 @@ def propablite_of_classes(rmse):
     pass
 
 
-if __name__ == "__main__":
+def img_to_sorted_dists(img_cv, side, prepro=False):
+    if prepro:
+        cnts, cropped_img = prepro(img_cv, side=side)
+    else:
+        cnts, cropped_img = preprocess_img(img_cv, side=side)
 
-    link = "../data/data.csv"
-    data = pd.read_csv(link, sep=";", index_col=0)
-    img = cv2.imread(link)
-    sorted_dists = img_to_sorted_dists(img)
+    cnts_form = detect_forme(cnts, cropped_img)
+    image, contours = merge_tangram(cropped_img, cnts_form)
 
-    # cv2.imshow('image',image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-    rmsesnp = np.array(rmse_distances(data, sorted_dists))
-
-    print(np.round(1/rmsesnp/np.sum(1/rmsesnp), 3))
-    print(rmsesnp)
-    print("min rmse: ", np.min(rmsesnp))
-    print("index of min rmse: ", np.argmin(np.array(rmsesnp)))
-    print(data['classe'][np.argmin(rmsesnp)])
+    centers, perimeters = distance_formes(contours)
+    distances = ratio_distance(centers, perimeters)
+    sorted_dists = sorted_distances(distances)
+    return sorted_dists  # we get the proba

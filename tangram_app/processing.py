@@ -7,7 +7,6 @@ import imutils
 def preprocess_img(img, side=None, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
-    =========
     Parameters : 
     img = OpenCV image
     side = process either left/right side or full frame.  - True by default
@@ -16,14 +15,14 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     author : @BasCR-hub
     '''
 
-    img = resize(img, side).copy()
+    # img = resize(img, side).copy()
+    img = crop(img, side=side)
     image_blurred = blur(img, 3)
-    cnts = get_contours(image_blurred)
-    image_triangles_squares = extract_triangles_squares(cnts, img)
-    blurred_triangles_squared = blur(
-        image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
-    final_cnts = get_contours(blurred_triangles_squared)
-    return final_cnts
+    final_cnts = get_contours(image_blurred)
+    # image_triangles_squares = extract_triangles_squares(cnts, img)
+    # blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
+    # final_cnts = get_contours(blurred_triangles_squared)
+    return final_cnts, img
 
 
 def extract_triangles_squares(cnts, image):
@@ -172,7 +171,6 @@ def crop(img, side="left"):
 
     # we take only 55% of the frame either left or right side
     width_img = img.shape[1]
-    print(width_img)
     box_width = int(width_img*0.55)
 
     if side == 'left':
