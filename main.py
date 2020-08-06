@@ -9,8 +9,8 @@ import os
 if __name__ == '__main__':
 
     # test save mements
-    images = get_files(directory='data/tangrams') # we have to change the images in this one
-    humoments, moments = save_moments(images, directory = 'data/')
+    # images = get_files(directory='data/tangrams') # we have to change the images in this one
+    # humoments, moments = save_moments(images, directory = 'data/')
 
     # paths available for testing
     path_vid = "data/videos/coeur.mov"
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     # cli options
     parser = argparse.ArgumentParser(description="Tangram detection\n")
-    parser.add_argument('-m', '--mode', help='analyze picture or video', default=0) # default to webcam
+    parser.add_argument('-m', '--mode', help='analyze picture or video', default=False) # default to webcam
     parser.add_argument('-s', '--side', help='analyze left / right or the full frame', default="left")
     parser.add_argument('-metrics', '--metrics', help='get metrics of our model', default=False)
     parser.add_argument('-test', '--test', help='test prepro', default=False)
@@ -49,11 +49,10 @@ if __name__ == '__main__':
         print(report)
 
     if args.test:
-        path = "data/test_images/bateau_1_right.jpg"
+        path = "data/test_images/tortue_5_right.jpg"
         img_cv = cv2.imread(path)
-        preprocess_img2(img_cv, side="right")
-        # print(tangram_game(image=path, side="right", prepro=preprocess_img2))
-        
-
+        preprocess_img_nono(img_cv, side="right")
+        # print(path)
+        # print(tangram_game(image=path, side="right", prepro=False))
     
     

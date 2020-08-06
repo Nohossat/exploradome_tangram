@@ -15,14 +15,13 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     author : @BasCR-hub
     '''
 
-    img = resize(img,side).copy()
-    image_blurred = blur(img,1)
+    img = resize(img, side).copy()
+    image_blurred = blur(img,3)
     cnts = get_contours(image_blurred)
     image_triangles_squares = extract_triangles_squares(cnts, img)
-    
-
     blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
+    display_contour(final_cnts, img)
     return final_cnts
 
 def extract_triangles_squares(cnts, image):    
@@ -100,14 +99,5 @@ def display_contour(cnts, img):
     """
     for c in cnts:
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
-    cv2.imshow("Image", img)
+    cv2.imshow("ImageTTT", img)
     cv2.waitKey(0)
-    
-
-if __name__ == "__main__":
-    # testing the contour of the image => see with Renata how to include it to integration tests
-    img_cv = cv2.imread('data/tangrams/renard.jpg')
-    cnts, img = preprocess_img(img_cv, crop=False)
-    display_contour(cnts, img)
-
-#test

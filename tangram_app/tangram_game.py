@@ -48,7 +48,7 @@ def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, i
 
         # pass side and image to get predictions function
         img_cv = cv2.imread(image)
-        predictions, cnts = get_predictions(img_cv, hu_moments, target, side = side, prepro=False) # retourne cnts so you can print them too
+        predictions, cnts = get_predictions(img_cv, hu_moments, target, side = side, prepro=prepro) # retourne cnts so you can print them too
         return predictions
 
     # compare video frames with dataset images
@@ -57,7 +57,7 @@ def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, i
 
         while(cap.isOpened()):
             ret, image = cap.read() # Capture frame-by-frame
-            predictions, cnts = get_predictions(image, hu_moments, target, side = side) # retourne cnts so you can print them too
+            predictions, cnts = get_predictions(image, hu_moments, target, side = side, prepro=prepro) # retourne cnts so you can print them too
             print(predictions)
 
             if cv2.waitKey(0) & 0xFF == ord('q'):
@@ -104,7 +104,7 @@ def tangram_game_live_test(side=None, video=0):
             print("we are done")
             break
 
-        predictions, cnts = get_predictions(image, hu_moments, target, side = side)
+        predictions, cnts = get_predictions(image, hu_moments, target, side = side, prepro=prepro)
         image = imutils.resize(image, width=1200)
         
         # add prediction on the frame
