@@ -14,7 +14,9 @@ import pprint
 main entry in the application: tangram_game
 you can do live testing with the tangram_game_live_test
 """
-def tangram_game_dist(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, image=False, prepro=False):
+
+# test new algo Gautier 
+def tangram_game_dist(side=None, video=0, image=False, prepro=False):
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
@@ -34,10 +36,6 @@ def tangram_game_dist(hu_moments_dataset='data/hu_moments.csv', side=None, video
     author : @Nohossat
     """
 
-    # get dataset
-    hu_moments = pd.read_csv(hu_moments_dataset)
-    target = hu_moments.iloc[:, -1]
-
     # compare image with dataset images
     if image :
         assert os.path.exists(image), "the image doesn't exist"
@@ -53,15 +51,15 @@ def tangram_game_dist(hu_moments_dataset='data/hu_moments.csv', side=None, video
         
         # get distances
         data = pd.read_csv("data/data.csv", sep=";")
-
         mses = np.array(mse_distances(data, distances))
 
         # get proba
         proba = np.round(1/mses/np.sum(1/mses), 3)
-        print("proba", proba)
 
-        best_fit = data['classe'][np.argmin(mses)]
-        return best_fit
+        # get probabilities
+        probas_labelled = data[["classe"]]
+        probas_labelled.loc[:, "target"] = proba
+        return probas_labelled.sort_values(by=["target"], ascending=False)
 
     # compare video frames with dataset images
     if not isinstance(video, bool):
@@ -69,8 +67,18 @@ def tangram_game_dist(hu_moments_dataset='data/hu_moments.csv', side=None, video
 
         while(cap.isOpened()):
             ret, image = cap.read() # Capture frame-by-frame
-            predictions = img_to_sorted_dists(img_cv, prepro=prepro)
-            print(predictions)
+            distances = img_to_sorted_dists(img_cv, prepro=prepro)
+
+            # compute distances
+            data = pd.read_csv("data/data.csv", sep=";")
+            mses = np.array(mse_distances(data, distances))
+
+            # get proba
+            proba = np.round(1/mses/np.sum(1/mses), 3)
+            # get probabilities
+            probas_labelled = data[["classe"]]
+            probas_labelled.loc[:, "target"] = proba
+            print(probas_labelled.sort_values(by=["target"], ascending=False))
 
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 break

@@ -318,12 +318,9 @@ def img_to_sorted_dists(img_cv, side, prepro=False):
         cnts, cropped_img = preprocess_img(img_cv, side=side)
 
     cnts_form = detect_forme(cnts, cropped_img)
-    # display_contour(cnts_form, cropped_img)
-
     image, contours = merge_tangram(cropped_img, cnts_form)
-    # display_contour(contours, image)
 
     centers, perimeters = distance_formes(contours)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
-    return sorted_dists # we get the proba
+    return sorted_dists

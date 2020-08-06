@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     if args.test:
         path = "data/test_images/cygne_20_left.jpg"
-        path1 = "data/test_images/bateau_8_right.jpg"
+        path1 = "data/test_images/bateau_1_right.jpg"
         img_cv = cv2.imread(path1)
 
         print(tangram_game_dist(side="right", image=path1, prepro=False))

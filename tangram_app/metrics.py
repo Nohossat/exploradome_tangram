@@ -7,7 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # test statiques
-def get_classification_report_pics(dataset_path=None):
+def get_classification_report_pics(dataset_path=None, get_pred=tangram_game):
     """
     from a set of images, get global accuracy, precision, recall
     """
@@ -24,7 +24,7 @@ def get_classification_report_pics(dataset_path=None):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = tangram_game(image = img_path)
+        predictions = get_pred(image = img_path)
 
         if predictions is None:
             continue
