@@ -2,15 +2,12 @@ from tangram_app.tangram_game import tangram_game, tangram_game_live_test
 from tangram_app.metrics import get_classification_report_pics
 from tangram_app.prepare_tangrams_dataset import get_files, save_moments
 from tangram_app.prepro2 import *
+from tangram_app.processing import *
 import argparse
 import os
 
 
 if __name__ == '__main__':
-
-    # test save mements
-    # images = get_files(directory='data/tangrams') # we have to change the images in this one
-    # humoments, moments = save_moments(images, directory = 'data/')
 
     # paths available for testing
     path_vid = "data/videos/coeur.mov"
@@ -51,7 +48,7 @@ if __name__ == '__main__':
     if args.test:
         path = "data/test_images/tortue_5_right.jpg"
         img_cv = cv2.imread(path)
-        preprocess_img_nono(img_cv, side="right")
+        preprocess_img_2(img_cv, side="right")
         # print(path)
         # print(tangram_game(image=path, side="right", prepro=False))
     
