@@ -1,6 +1,6 @@
 # exploradome_tangram
 Tangram form detection from live video stream in the real time. 
-Intermediate stages crop, contrast
+We use intermediate stages crop, contrast
 
 In order to run this annotation tool, run 'main.py' file.
 
@@ -28,6 +28,8 @@ python3 main.py --mode /videos/coeur.jpg --side right
 Find the best accuracy for the model 
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
+
+![metric..jpg](:storage\3b3b020d-451d-4214-ae57-e99804810a72\fdf77c5e.jpg)
 
 ## Configuration
 Data 
