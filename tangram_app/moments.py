@@ -72,7 +72,7 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
         cnts = preprocess_img(image, side=side)
     else : # special prepro
         cnts = prepro(image, side=side)
-
+    print(type(cnts),cnts)
     HuMo = find_moments(cnts)
 
     if len(HuMo) == 0 : 
