@@ -182,6 +182,7 @@ def distance_formes(contours):
 
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
+
     perimeters = {"smallTriangle": [], "middleTriangle": [],
                   "bigTriangle": [], "squart": [], "parallelo": []}
 
@@ -277,34 +278,38 @@ def distance_formes(contours):
 
 # for mean of formes
 
+# def unique_centers(centers):
+#     centres_unique_form = {}
 
-def unique_centers(centers):
-    centres_unique_form = {}
-
-    for x, y in centers.items():
-        center = [0, 0]
-        for ele in y:
-            i, j = ele
-            center[0] += i
-            center[1] += j
-        centres_unique_form[x] = (
-            int(center[0] / len(y)), int(center[1] / len(y)))
-    return centres_unique_form
+#     for x, y in centers.items():
+#         center = [0, 0]
+#         for ele in y:
+#             i, j = ele
+#             center[0] += i
+#             center[1] += j
+#         centres_unique_form[x] = (
+#             int(center[0] / len(y)), int(center[1] / len(y)))
+#     return centres_unique_form
 
 
-def distance_forme(centers):
-    distances = {}
-    for forme1, center1 in centers.items():
-        for forme2, center2 in centers.items():
-            if forme1 != forme2:
-                x1, y1 = center1
-                x2, y2 = center2
-                distances[forme1 + "-" +
-                          forme2] = round(math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)), 2)
-    return distances
+# def distance_forme(centers):
+#     distances = {}
+#     for forme1, center1 in centers.items():
+#         for forme2, center2 in centers.items():
+#             if forme1 != forme2:
+#                 x1, y1 = center1
+#                 x2, y2 = center2
+#                 distances[forme1 + "-" +
+#                           forme2] = round(math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)), 2)
+#     return distances
 
 
 def ratio_distance(centers, perimeters):
+    '''
+    This function take in input an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
+
+    '''
+
     distances = {}
 
     for forme1, centers1 in centers.items():
@@ -363,6 +368,9 @@ def ratio_distance(centers, perimeters):
 
 
 def sorted_distances(distances):
+    '''
+    # This function sort all distances by form  in accending
+    '''
     data_distances = {"smallTriangle-smallTriangle": [], "smallTriangle-middleTriangle": [],
                       "smallTriangle-bigTriangle": [], "smallTriangle-squart": [], "smallTriangle-parallelo": [],
                       "middleTriangle-bigTriangle": [], "middleTriangle-squart": [], "middleTriangle-parallelo": [],
@@ -370,10 +378,13 @@ def sorted_distances(distances):
                       "squart-parallelo": []
                       }
 
+    # keys of all shapes
     keys = ["smallTriangle", "middleTriangle",
             "bigTriangle", "squart", "parallelo"]
 
     liste = []
+
+    # sorted all distances in all shapes default array
     for i in range(len(keys)):
         for j in range(i):
             liste.append(keys[j] + "-" + keys[i])
@@ -396,6 +407,7 @@ def sorted_distances(distances):
 
     data_sortered = {}
 
+    # Ordered all shapes in a dictionnay with sigle index to a distace value, not a index for an array of distances
     for key, value in data_distances.items():
         if len(value) > 1:
             for i in range(len(value)):
@@ -406,15 +418,13 @@ def sorted_distances(distances):
 
 
 def img_to_sorted_dists(img_cv):
+    '''
+    It takes a img_cv in input, and returns a dictionnay of shape with distance ordered
+    '''
     cnts, img = preprocess_img(img_cv, crop=False)
     cnts_form, image = detect_forme(cnts, img)
 
     image, contours = merge_tangram(image, cnts_form)
-
-    # cv2.imshow('image',image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
     centers, perimeters = distance_formes(contours)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
@@ -422,6 +432,10 @@ def img_to_sorted_dists(img_cv):
 
 
 def create_all_types_distances(link):
+    '''
+    Create a dataframe by 12 images with our img_to_sorted_dists function and save this as a CSV file.
+    '''
+
     images = ['bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.JPG', 'marteau.jpg',
               'montagne.jpg', 'pont.jpg', 'renard.JPG', 'tortue.jpg']
     data = pd.DataFrame(
@@ -451,6 +465,10 @@ def mse_distances(data, sorted_dists):
             [pow(ligne[index] - sorted_dists[index], 2) for index, _ in sorted_dists.items() if
              index in ligne.keys()])), 3))
     return mses
+
+
+def propablite_of_classes(mse):
+    pass
 
 
 if __name__ == "__main__":
