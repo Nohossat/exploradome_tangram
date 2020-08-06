@@ -15,7 +15,7 @@ def detect_black_color(img):
 
     return frame_threshed
 
-def preprocess_img2(img, side=None, sensitivity_to_light=50):
+def preprocess_img_nono(img, side=None, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
     =========
@@ -44,7 +44,7 @@ def preprocess_img2(img, side=None, sensitivity_to_light=50):
     display_contour(final_cnts, img) # testing purposes
     return final_cnts
 
-def preprocess_img3(img, side=None, sensitivity_to_light=50):
+def preprocess_img_original(img, side=None, sensitivity_to_light=50):
     '''
     this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
     =========
@@ -59,10 +59,11 @@ def preprocess_img3(img, side=None, sensitivity_to_light=50):
     img = resize(img, side).copy()
     image_blurred = blur(img,3)
     cnts = get_contours(image_blurred)
-    image_triangles_squares = extract_triangles_squares(cnts, img)
+    image_triangles_squares = extract_triangles_squares(cnts, img, img)
     
-    blurred_triangles_squared = blur(image_triangles_squares,7,sensitivity_to_light='ignore').copy()
+    blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
+    display_contour(final_cnts, img)
     return final_cnts
 
 def extract_triangles_squares(cnts, image, img_color):    
@@ -75,12 +76,11 @@ def extract_triangles_squares(cnts, image, img_color):
 
         area = cv2.contourArea(cnt)
         img_area = image.shape[0] * image.shape[1]
-        
+        print(len(approx))
         display_contour(cnt, img_color)
 
         if area/img_area > 0.0005:
             # for triangle
-
             if len(approx) == 3:
                 cnts_output.append(cnt)
                 cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
@@ -217,9 +217,31 @@ def display_contour(cnts, img):
     cv2.imshow("Image", img)
     cv2.waitKey(0)
     
+def extract_triangles_squares_2(cnts, image, img_color):    
+    cnts_output = []
+    out_image = np.zeros(image.shape, image.dtype)
 
-if __name__ == "__main__":
-    # testing the contour of the image => see with Renata how to include it to integration tests
-    img_cv = cv2.imread('data/tangrams/renard.jpg')
-    cnts, img = preprocess_img(img_cv, crop=False)
-    display_contour(cnts, img)
+    for idx,cnt in enumerate(cnts):
+        perimetre = cv2.arcLength(cnt, True)
+        approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
+
+        area = cv2.contourArea(cnt)
+        img_area = image.shape[0] * image.shape[1]
+        print(len(approx))
+        display_contour(cnt, img_color)
+
+        if area/img_area > 0.0005:
+            # for triangle
+            if len(approx) == 3:
+                cnts_output.append(cnt)
+                cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
+                cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))
+            # for quadrilater
+            elif len(approx) == 4:
+                (x, y, w, h) = cv2.boundingRect(approx)
+                ratio = w / float(h)
+                if(ratio >= 0.3 and ratio <= 3):
+                    cnts_output.append(cnt)
+                    cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
+                    cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))  
+    return out_image

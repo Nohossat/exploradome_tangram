@@ -18,7 +18,28 @@ pip install imutils
 ## How To Use
 
 
+<<<<<<< HEAD
+```shell
+git clone https://github.com/Nohossat/exploradome_tangram/tree/numpy---team-4
+cd exploradome_tangram
+python -m venv venv/
+source venv/Scripts/activate
+pip install -r requirements.txt
+
+# launch the app with an external webcam on the right side of the board
+python3 main.py --mode 1 --side right
+
+# launch the app with a video on the left side
+python3 main.py --mode /videos/coeur.pm4 --side left
+
+# launch the app with an image on the right side
+python3 main.py --mode /videos/coeur.jpg --side right
+```
+
+## Approach
+=======
 # Approach
+>>>>>>> 4736ba6286ede05cc13cb1d684fbdd976e5f56a7
 Find the best accuracy for the model 
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
