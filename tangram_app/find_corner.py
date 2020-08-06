@@ -30,7 +30,7 @@ def get_nb_corners(img):
         # cv2.waitKey(0)
         # cv2.destroyAllWindows
         
-    return len(corners)
+    return len(corners), corners
 
 
 

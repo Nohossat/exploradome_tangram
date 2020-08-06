@@ -1,6 +1,6 @@
 <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/logo.jpg"></p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
 [![Build Status](https://travis-ci.org/anfederico/Clairvoyant.svg?branch=master)](https://travis-ci.org/anfederico/Clairvoyant)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -11,7 +11,7 @@ Tangram form detection from live video stream in the real time.
 We use intermediate stages crop, contrast
 
 In order to run this annotation tool, run 'main.py' file.
-
+The tangram is a dissection puzzle consisting of seven  tans, which are put together to form shapes. The objective is to replicate a pattern (given only an outline) using all seven pieces without overlap.
 
 
 ## Installation and Usage
@@ -38,6 +38,7 @@ python3 main.py --mode /videos/coeur.jpg --side right
 Find the best accuracy for the model 
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
+
 
 <p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/metric.jpg"></p>
 <p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/matrice.png"></p>

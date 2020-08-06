@@ -2,7 +2,7 @@ import numpy as np
 import os
 import cv2
 import imutils
-# import find_corner
+from tangram_app.find_corner import *
 
 def detect_black_color(img):
     # img : OpenCV image
@@ -15,6 +15,22 @@ def detect_black_color(img):
     frame_threshed = cv2.inRange(hsv_img, BLACK_MIN, BLACK_MAX)
 
     return frame_threshed
+
+def detect_white_color(img):
+    # img : OpenCV image
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # define range of white color in HSV
+    # change it according to your need !
+    lower_white = np.array([0,0,168], dtype=np.uint8)
+    upper_white = np.array([172,111,255], dtype=np.uint8)
+
+    # Threshold the HSV image to get only white colors
+    mask = cv2.inRange(hsv, lower_white, upper_white)
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(img,img, mask= mask)
+
+    return mask
 
 def preprocess_img_nono(img, side=None, sensitivity_to_light=50):
     '''
@@ -57,7 +73,7 @@ def preprocess_img_original(img, side=None, sensitivity_to_light=50):
     author : @BasCR-hub
     '''
 
-    img = resize(img, side).copy()
+    img = crop(img, side=side)
     image_blurred = blur(img,3)
     cnts = get_contours(image_blurred)
     image_triangles_squares = extract_triangles_squares(cnts, img, img)
@@ -76,8 +92,8 @@ def extract_triangles_squares(cnts, image, img_color):
 
         area = cv2.contourArea(cnt)
         img_area = image.shape[0] * image.shape[1]
-        print(len(approx))
-        display_contour(cnt, img_color)
+        # print(len(approx))
+        # display_contour(cnt, img_color)
 
         if area/img_area > 0.0005:
             # for triangle
@@ -96,7 +112,6 @@ def extract_triangles_squares(cnts, image, img_color):
             elif len(approx) > 4 : 
                 intersect = contour_intersect(cnt_ref=cnts_output, cnt_query=cnt)
                 # print vertices of each form
-                # get_nb_corners(img)
                 if intersect :
                     print(True)
                     cnts_output.append(cnt)
@@ -147,57 +162,33 @@ def blur(img,strength_blur = 7,sensitivity_to_light=50):
     return image_blurred
 
 def get_contours(image):
-    cnts = cv2.findContours(image.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     return cnts
 
-def resize2(img, side, percent=50):
-    '''
-    this function takes a cv image as input and resizes it. 
-    The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
-    the secondary objective is to speed up processing.
-    =========
-    Parameters : 
-    img : OpenCV image  
-    percent : the percentage of the scaling  
-    author : @BasCR-hub  
-    '''
+def crop(img, side="left"):
+    """
+    crop the left or right side of the image 
 
-    if side:
-        if side == 'right':
-            img = img[:-50,1000:-130]
-        elif side == 'left':
-            img = img[:-70,50:920]
+    Parameters:
+    - img : OpenCV
+    - side : left / right
 
-    scale_percent = percent # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA).copy()
+    Returns : OpenCV image
+    """
+    assert side in ["left", "right"], "not a valid side"
+
+    # we take only 55% of the frame either left or right side
+    width_img = img.shape[1]
+    print(width_img)
+    box_width = int(width_img*0.55)
     
-    return img
-
-def resize(img, side, percent=50):
-    '''
-    this function takes a cv image as input and resizes it. 
-    The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
-    the secondary objective is to speed up processing.
-    =========
-    Parameters : 
-    img : OpenCV image  
-    percent : the percentage of the scaling  
-    author : @BasCR-hub  
-    '''
-    scale_percent = percent # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA).copy()
-    if side:
-        if side == 'right':
-            img = img[:-50,470:-130]
-        elif side == 'left':
-            img = img[:-70,50:470]
+    if side == 'left':
+        img = img[:, :box_width]
+    else:
+        box_width = width_img - box_width
+        img = img[:, box_width:width_img]
+    
     return img
 
 def display_contour(cnts, img):

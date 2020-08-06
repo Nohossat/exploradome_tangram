@@ -4,121 +4,7 @@ import cv2
 import imutils
 import math
 import pandas as pd
-
-
-def preprocess_img(img, side=None, sensitivity_to_light=50):
-    '''
-    this function takes a cv image as input, calls the resize function, crops the image to keep only the board, chooses the left / right half of the board or the full board if the child is playing alone, and eventually finds the largest dark shape
-    =========
-
-    Parameters :
-
-    img = OpenCV image
-    side = process either left/right side or full frame.  - True by default
-    crop = decides if image needs cropping - set crop to False when processing dataset images, they are already cut
-    sensitivity_to_light = parameter to turn the background black
-
-    author : @BasCR-hub
-    '''
-    img = resize(img, side).copy()
-    image_blurred = blur(img, 3)
-    cnts = get_contours(image_blurred)
-    image_triangles_squares = extract_triangles_squares(cnts, img)
-
-    blurred_triangles_squared = blur(
-        image_triangles_squares, 7, sensitivity_to_light='ignore').copy()
-    final_cnts = get_contours(blurred_triangles_squared)
-    return final_cnts
-
-
-def extract_triangles_squares(cnts, image):
-    cnts_output = []
-    out_image = np.zeros(image.shape, image.dtype)
-    for idx, cnt in enumerate(cnts):
-        perimetre = cv2.arcLength(cnt, True)
-        approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
-
-        area = cv2.contourArea(cnt)
-        img_area = image.shape[0] * image.shape[1]
-
-        if area/img_area > 0.0005:
-            # for triangle
-            if len(approx) == 3:
-                cnts_output.append(cnt)
-                cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
-                cv2.fillPoly(out_image, pts=[cnt], color=(50, 255, 50))  # ??
-            # for quadrilater
-            elif len(approx) == 4:
-                (x, y, w, h) = cv2.boundingRect(approx)
-                ratio = w / float(h)
-                if(ratio >= 0.3 and ratio <= 3):
-                    cnts_output.append(cnt)
-                    cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
-                    cv2.fillPoly(out_image, pts=[cnt], color=(50, 255, 50))
-    return out_image
-
-
-def blur(img, strength_blur=7, sensitivity_to_light=50):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # binarize img
-    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    if sensitivity_to_light != 'ignore':
-        gray[gray > sensitivity_to_light] = 0
-    blurred = cv2.medianBlur(gray, strength_blur)
-    image_blurred = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]
-    return image_blurred
-
-
-def get_contours(image):
-    cnts = cv2.findContours(
-        image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    return cnts
-
-
-def resize(img, side, percent=50):
-    '''
-    this function takes a cv image as input and resizes it.
-    The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
-    the secondary objective is to speed up processing.
-
-    =========
-
-    Parameters :
-
-    img : OpenCV image
-    percent : the percentage of the scaling
-
-    author : @BasCR-hub
-    '''
-    scale_percent = percent  # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA).copy()
-    if side:
-        if side == 'right':
-            img = img[:-50, 470:-130]
-        elif side == 'left':
-            img = img[:-70, 50:470]
-    return img
-
-
-def display_contour(cnts, img):
-    """
-    display the contour of the image
-
-    =========
-
-    Parameters : 
-    cnts : contours of the forms in the image
-    img : OpenCV image
-
-    author : @BasCR-hub
-    """
-    for c in cnts:
-        cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
-    cv2.imshow("Image", img)
-    cv2.waitKey(0)
+from processing import preprocess_img
 
 
 def detect_forme(cnts, image):
@@ -147,7 +33,7 @@ def detect_forme(cnts, image):
                 if (ratio >= 0.33 and ratio <= 3):
                     cnts_output.append(cnt)
 
-    return cnts_output, image
+    return cnts_output
 
 
 def merge_tangram(image, contours):
@@ -303,7 +189,6 @@ def distance_formes(contours):
 #                           forme2] = round(math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)), 2)
 #     return distances
 
-
 def ratio_distance(centers, perimeters):
     '''
     This function take in input an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
@@ -422,9 +307,9 @@ def img_to_sorted_dists(img_cv):
     It takes a img_cv in input, and returns a dictionnay of shape with distance ordered
     '''
     cnts, img = preprocess_img(img_cv, crop=False)
-    cnts_form, image = detect_forme(cnts, img)
+    cnts_form = detect_forme(cnts, img)
 
-    image, contours = merge_tangram(image, cnts_form)
+    image, contours = merge_tangram(img, cnts_form)
     centers, perimeters = distance_formes(contours)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
@@ -457,7 +342,7 @@ def create_all_types_distances(link):
     data.to_csv(link, sep=";")
 
 
-def mse_distances(data, sorted_dists):
+def rmse_distances(data, sorted_dists):
     mses = []
     for i in range(data.shape[0]):
         ligne = data.iloc[i]
@@ -467,27 +352,35 @@ def mse_distances(data, sorted_dists):
     return mses
 
 
-def propablite_of_classes(mse):
+def img_to_sorted_dists(img_cv):
+    cnts, img = preprocess_img(img_cv)
+    cnts_form, image = detect_forme(cnts, img)
+    image, contours = merge_tangram(image, cnts_form)
+    centers, perimeters = distance_formes(contours)
+    distances = ratio_distance(centers, perimeters)
+    sorted_dists = sorted_distances(distances)
+    return sorted_dists
+
+
+def propablite_of_classes(rmse):
     pass
 
 
 if __name__ == "__main__":
 
-    link = "data/data.csv"
-
-    # create_all_types_distances(link)
+    link = "../data/data.csv"
     data = pd.read_csv(link, sep=";", index_col=0)
-    img_cv = cv2.imread('data/testes/coeur_6.png')
-    # cv2.imshow('im', img_cv)
+    img = cv2.imread(link)
+    sorted_dists = img_to_sorted_dists(img)
+
+    # cv2.imshow('image',image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    sorted_dists = img_to_sorted_dists(img_cv)
+    rmsesnp = np.array(rmse_distances(data, sorted_dists))
 
-    msesnp = np.array(mse_distances(data, sorted_dists))
-
-    print(np.round(1/msesnp/np.sum(1/msesnp), 3))
-    print(msesnp)
-    print("min mse: ", np.min(msesnp))
-    print("index of min mse: ", np.argmin(np.array(msesnp)))
-    print(data['classe'][np.argmin(msesnp)])
+    print(np.round(1/rmsesnp/np.sum(1/rmsesnp), 3))
+    print(rmsesnp)
+    print("min rmse: ", np.min(rmsesnp))
+    print("index of min rmse: ", np.argmin(np.array(rmsesnp)))
+    print(data['classe'][np.argmin(rmsesnp)])
