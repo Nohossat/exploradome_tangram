@@ -29,7 +29,7 @@ Find the best accuracy for the model
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
 
-![metric..jpg](:storage\3b3b020d-451d-4214-ae57-e99804810a72\fdf77c5e.jpg)
+/data/metric.jpg
 
 ## Configuration
 Data 
