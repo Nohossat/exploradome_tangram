@@ -8,6 +8,14 @@ from .processing import preprocess_img
 
 
 def detect_forme(cnts, image):
+    '''
+    This function detects all triangle squart and quadilater shape in the image
+    author: @Gautier
+    ================================
+    Parameter:
+     @cnts: contours that previous function returns
+     @image: image that we have preprocessed
+    '''
     cnts_output = []
 
     for cnt in cnts:
@@ -18,18 +26,15 @@ def detect_forme(cnts, image):
         img_area = image.shape[0] * image.shape[1]
         # print("image area", img_area)
         if area / img_area > 0.0001:
-            # for triangle
+            # for triangle, if the shape has 3 angles
             if len(approx) == 3:
                 cnts_output.append(cnt)
-            # for quadrilater
+            # for quadrilater, if the shape has 4 angles
             elif len(approx) == 4:
                 (x, y, w, h) = cv2.boundingRect(approx)
 
                 ratio = w / float(h)
-                # if ratio >= 0.95 and ratio <= 1.05:
-                # cnts_output.append(cnt)
-
-                # elif(ratio >= 0.3 and ratio < 0.95) or (ratio > 1.05 and ratio <= 3):
+                # if the ratio is correct, we take this shape as a quadrilater
                 if (ratio >= 0.33 and ratio <= 3):
                     cnts_output.append(cnt)
 
@@ -37,6 +42,14 @@ def detect_forme(cnts, image):
 
 
 def merge_tangram(image, contours):
+    '''
+    This functions puts all shapes in a black background image, it deletes all others shapes
+    author: @Gautier
+    ================================
+    Parameter:
+     @image: the original image
+     @contours: all contours that returns last function
+    '''
     # Create a new black image
     out_image = np.zeros(image.shape, image.dtype)
 
@@ -46,33 +59,43 @@ def merge_tangram(image, contours):
 
 
 def distance_formes(contours):
+    '''
+    In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
+    In the second step it calculates all distance between 2 shapes
+    author: @Gautier
+    ==============================
+    Parameter:
+     @contours: the cv2.contours that returns last function
+    '''
     formes = {"triangle": [], "squart": [], "parallelo": []}
 
     for cnt in contours:
 
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
+        # if the shape has 3 angles we consider this shape is a triangle
         if len(approx) == 3:
             formes["triangle"].append(cnt)
-
+         # if the shape has 4 angles we consider this shape is a quadrilateral
         elif len(approx) == 4:
             (x, y, w, h) = cv2.boundingRect(approx)
 
             ratio = w / float(h)
-
+            # if the quadrilateral has this ratio between height and width, we consider this is a square
             if ratio >= 0.9 and ratio <= 1.1:
                 formes["squart"].append(cnt)
-
+            # if the quadrilateral has this ratio between height and width, we consider this is a parallelogram
             elif (ratio >= 0.3 and ratio <= 3.3):
                 formes["parallelo"].append(cnt)
 
+    # dictionnay to take barycenters of all shapes
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
-
+    # dictionnay to take perimeters of all shapes
     perimeters = {"smallTriangle": [], "middleTriangle": [],
                   "bigTriangle": [], "squart": [], "parallelo": []}
 
-    # Comparer la taille des triangle à parallélograme unique
+    # we detecte the size of trianlge, we compare the area of triangle to the unique square's, if we detect we have just one parallelogram
     if len(formes['triangle']) > 0:
         if len(formes["squart"]) == 1:
             areaSquart = cv2.contourArea(formes["squart"][0])
@@ -94,7 +117,7 @@ def distance_formes(contours):
                     centers['bigTriangle'].append(triangle_center)
                     perimeters['smallTriangle'].append(triangle_perimeter)
 
-        # Comparer la taille des triangle à parallélograme unique
+        # we detecte the size of trianlge, we compare the area of triangle to the unique square's, if we detect we have just one parallelogram
         elif len(formes["parallelo"]) == 1:
             areaSquart = cv2.contourArea(formes["parallelo"][0])
 
@@ -117,6 +140,7 @@ def distance_formes(contours):
                     centers['bigTriangle'].append(triangle_center)
                     perimeters['smallTriangle'].append(triangle_perimeter)
 
+        # else we compare between the bigger triangle and the smaller triangle
         else:
 
             triangleArea = [cv2.contourArea(triangle)
@@ -144,6 +168,7 @@ def distance_formes(contours):
                         centers['bigTriangle'].append(triangle_center)
                         perimeters['smallTriangle'].append(triangle_perimeter)
 
+        # for case of square
         for squart in formes['squart']:
             squart_perimeter = cv2.arcLength(squart, True)
             M = cv2.moments(squart)
@@ -152,6 +177,7 @@ def distance_formes(contours):
             centers['squart'].append(squart_center)
             perimeters['squart'].append(squart_perimeter)
 
+        # for case of parallelogram
         for parallelo in formes['parallelo']:
             parallelo_perimeter = cv2.arcLength(parallelo, True)
             M = cv2.moments(parallelo)
@@ -162,10 +188,14 @@ def distance_formes(contours):
 
     return centers, perimeters
 
+
 def ratio_distance(centers, perimeters):
     '''
-    This function take in input an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
-
+    This function calculate all ratios of distances between shapes with a shape's side  
+    ==================================================
+    Parameters
+     @centers: an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
+     @perimeters: a dictionnay of perimeters, it has keys of all shape's name
     '''
 
     distances = {}
@@ -316,6 +346,14 @@ def create_all_types_distances(link):
 
 
 def mse_distances(data, sorted_dists):
+    '''
+    This function returns a list of rmse that we have between our tangram with all classes 
+    author: @Gautier
+    ============================================
+    Parmeters:
+     @data: the dataframe containing all distances of shapes of all classes
+     @sorted_dists: the dictionnay containing our tangram's shape distances
+    '''
     mses = []
     for i in range(data.shape[0]):
         ligne = data.iloc[i]
@@ -325,21 +363,20 @@ def mse_distances(data, sorted_dists):
     return mses
 
 
-def img_to_sorted_dists(img_cv):
-    cnts, img = preprocess_img(img_cv)
-    cnts_form, image = detect_forme(cnts, img)
-    image, contours = merge_tangram(image, cnts_form)
-    centers, perimeters = distance_formes(contours)
-    distances = ratio_distance(centers, perimeters)
-    sorted_dists = sorted_distances(distances)
-    return sorted_dists
-
-
 def propablite_of_classes(rmse):
     pass
 
 
 def img_to_sorted_dists(img_cv, side, prepro=False):
+    '''
+    This function take in input a image and return a dictionnay of shape distances
+    author: @Gautier, @Nohossat
+    ================================
+    Parameters:
+     @img_cv: input image
+     @side: it take the position of the table, if side is left we take just the left side of table, right we take the right side
+    '''
+
     if prepro:
         cnts, cropped_img = prepro(img_cv, side=side)
     else:
