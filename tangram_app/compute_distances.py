@@ -4,11 +4,12 @@ import cv2
 import imutils
 import math
 import pandas as pd
+from .processing import *
 
 def detect_forme(cnts, image):
     cnts_output = []
-    for cnt in cnts:
 
+    for cnt in cnts:
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
 
@@ -31,7 +32,7 @@ def detect_forme(cnts, image):
                 if (ratio >= 0.33 and ratio <= 3):
                     cnts_output.append(cnt)
 
-    return cnts_output, image
+    return cnts_output
 
 def merge_tangram(image, contours):
     # Create a new black image
@@ -310,17 +311,19 @@ def mse_distances(data, sorted_dists):
              index in ligne.keys()])), 3))
     return mses
 
-def img_to_sorted_dists(img_cv):
-    cnts, img = preprocess_img(img_cv, crop=False)
-    cnts_form, image = detect_forme(cnts, img)
+def img_to_sorted_dists(img_cv, side, prepro=False):
+    if prepro:
+        cnts, cropped_img = prepro(img_cv, side=side)
+    else : 
+        cnts, cropped_img = preprocess_img(img_cv, side=side)
 
-    image, contours = merge_tangram(image, cnts_form)
+    cnts_form = detect_forme(cnts, cropped_img)
+    # display_contour(cnts_form, cropped_img)
 
-    # cv2.imshow('image',image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    image, contours = merge_tangram(cropped_img, cnts_form)
+    # display_contour(contours, image)
 
     centers, perimeters = distance_formes(contours)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
-    return sorted_dists
+    return sorted_dists # we get the proba

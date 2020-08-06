@@ -6,12 +6,78 @@ import os
 from .moments import get_predictions
 from .prepare_tangrams_dataset import get_files
 import re
+from .compute_distances import *
+import pprint
 
 
 """
 main entry in the application: tangram_game
 you can do live testing with the tangram_game_live_test
 """
+def tangram_game_dist(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, image=False, prepro=False):
+    """
+    analyze image or video stream to give the probabilities of the image / frame 
+    to belong to each class of our dataset
+
+    =========
+
+    Parameters : 
+
+    video : gives the channel to watch. False by default
+    image : gives the filename of the image we want to predict. False by default
+    side : the side to analyze on the frame : left / right / full frame (None)
+    crop : crop image if raw image
+
+    Returns : print predictions for each frame 
+
+    ========
+    author : @Nohossat
+    """
+
+    # get dataset
+    hu_moments = pd.read_csv(hu_moments_dataset)
+    target = hu_moments.iloc[:, -1]
+
+    # compare image with dataset images
+    if image :
+        assert os.path.exists(image), "the image doesn't exist"
+
+        # get size to analyze from image path
+        pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+        result = pattern.search(image)
+        side = result.group(2)
+
+        # pass side and image to get predictions function
+        img_cv = cv2.imread(image)
+        distances = img_to_sorted_dists(img_cv, side, prepro=prepro)
+        
+        # get distances
+        data = pd.read_csv("data/data.csv", sep=";")
+
+        mses = np.array(mse_distances(data, distances))
+
+        # get proba
+        proba = np.round(1/mses/np.sum(1/mses), 3)
+        print("proba", proba)
+
+        best_fit = data['classe'][np.argmin(mses)]
+        return best_fit
+
+    # compare video frames with dataset images
+    if not isinstance(video, bool):
+        cap = cv2.VideoCapture(video)
+
+        while(cap.isOpened()):
+            ret, image = cap.read() # Capture frame-by-frame
+            predictions = img_to_sorted_dists(img_cv, prepro=prepro)
+            print(predictions)
+
+            if cv2.waitKey(0) & 0xFF == ord('q'):
+                break
+
+        # When everything done, release the capture
+        cap.release()
+        cv2.destroyAllWindows()
 
 def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, image=False, prepro=False):
     """
