@@ -3,7 +3,12 @@ import numpy as np
 
 
 def get_nb_corners(img):
-    # img = cv2.imread()
+    """
+    Parameters :
+    img : OpenCV
+
+    Returns :
+    """
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = np.float32(gray)
     dst = cv2.cornerHarris(gray,5,3,0.04)

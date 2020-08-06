@@ -2,6 +2,7 @@ import numpy as np
 import os
 import cv2
 import imutils
+# import find_corner
 
 def detect_black_color(img):
     # img : OpenCV image
@@ -60,7 +61,6 @@ def preprocess_img_original(img, side=None, sensitivity_to_light=50):
     image_blurred = blur(img,3)
     cnts = get_contours(image_blurred)
     image_triangles_squares = extract_triangles_squares(cnts, img, img)
-    
     blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
     display_contour(final_cnts, img)
@@ -94,12 +94,9 @@ def extract_triangles_squares(cnts, image, img_color):
                     cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
                     cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))  
             elif len(approx) > 4 : 
-                # the shape is extraneous because a head or a hand is on top of the image, 
-                # we try to see if the form is close to the main figure
-                # normally the hands are already removed from the image so we juwt check closeness to see if we add it or not
-                # we can also check if the main form has already 7 elements, if it is the case, it means that the shape is already complete
                 intersect = contour_intersect(cnt_ref=cnts_output, cnt_query=cnt)
-
+                # print vertices of each form
+                # get_nb_corners(img)
                 if intersect :
                     print(True)
                     cnts_output.append(cnt)
