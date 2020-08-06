@@ -67,7 +67,7 @@ def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, i
         cap.release()
         cv2.destroyAllWindows()
 
-def tangram_game_live_test(side=None, video=0):
+def tangram_game_live_test(side=None, video=0,prepro=False):
     """
     analyze video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset and display it

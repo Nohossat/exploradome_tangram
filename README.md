@@ -6,10 +6,16 @@ In order to run this annotation tool, run 'main.py' file.
 
 ## Installation and Usage
 
-OpenCV (Open Computer Vision Library) - pip install opencv-python
-Numpy -  pip install numpy
-Imutils - pip install imutils
+OpenCV (Open Computer Vision Library) 
+Numpy 
+Imutils  
+```python
+pip install opencv-python
+pip install numpy
+pip install imutils
+```
 
+<<<<<<< HEAD
 ```shell
 git clone https://github.com/Nohossat/exploradome_tangram/tree/numpy---team-4
 cd exploradome_tangram
@@ -28,6 +34,9 @@ python3 main.py --mode /videos/coeur.jpg --side right
 ```
 
 ## Approach
+=======
+# Approach
+>>>>>>> 4736ba6286ede05cc13cb1d684fbdd976e5f56a7
 Find the best accuracy for the model 
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
