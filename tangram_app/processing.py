@@ -15,18 +15,19 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     author : @BasCR-hub
     '''
 
-    img = resize(img, side).copy()
+    # img = resize(img, side).copy()
+    img = crop(img, side=side)
     image_blurred = blur(img,3)
-    cnts = get_contours(image_blurred)
-    image_triangles_squares = extract_triangles_squares(cnts, img)
-    blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
-    final_cnts = get_contours(blurred_triangles_squared)
-    display_contour(final_cnts, img)
-    return final_cnts
+    final_cnts = get_contours(image_blurred)
+    # image_triangles_squares = extract_triangles_squares(cnts, img)
+    # blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
+    # final_cnts = get_contours(blurred_triangles_squared)
+    return final_cnts, img
 
 def extract_triangles_squares(cnts, image):    
     cnts_output = []
     out_image = np.zeros(image.shape, image.dtype)
+
     for idx,cnt in enumerate(cnts):
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
@@ -99,7 +100,10 @@ def display_contour(cnts, img):
     """
     for c in cnts:
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
+
+    img = imutils.resize(img, width=1200)
     cv2.imshow("Image", img)
+    cv2.moveWindow('Image', 30, 30)
     cv2.waitKey(0)
 
 def preprocess_img_2(origin_img,side):
@@ -119,9 +123,9 @@ def preprocess_img_2(origin_img,side):
 def extract_triangles_squares(cnts, img):    
     cnts_output = []
     out_image = np.zeros(img.shape, img.dtype)
-#     cv2.imshow('img',img)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
+    # cv2.imshow('img',img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     
     for idx,cnt in enumerate(cnts):
         perimetre = cv2.arcLength(cnt, True)
@@ -150,11 +154,27 @@ def extract_triangles_squares(cnts, img):
 
     return cnts_output,out_image
     
+def crop(img, side="left"):
+    """
+    crop the left or right side of the image 
 
-if __name__ == "__main__":
-    # testing the contour of the image => see with Renata how to include it to integration tests
-    img_cv = cv2.imread('data/tangrams/renard.jpg')
-    cnts, img = preprocess_img(img_cv, crop=False)
-    display_contour(cnts, img)
+    Parameters:
+    - img : OpenCV
+    - side : left / right
 
-#test
+    Returns : OpenCV image
+    """
+    assert side in ["left", "right"], "not a valid side"
+
+    # we take only 55% of the frame either left or right side
+    width_img = img.shape[1]
+    box_width = int(width_img*0.55)
+    
+    if side == 'left':
+        img = img[:, :box_width]
+    else:
+        box_width = width_img - box_width
+        img = img[:, box_width:width_img]
+    
+    return img
+

@@ -1,4 +1,4 @@
-from tangram_app.tangram_game import tangram_game, tangram_game_live_test
+from tangram_app.tangram_game import tangram_game, tangram_game_live_test, tangram_game_dist
 from tangram_app.metrics import get_classification_report_pics
 from tangram_app.prepare_tangrams_dataset import get_files, save_moments
 from tangram_app.prepro2 import *
@@ -46,9 +46,12 @@ if __name__ == '__main__':
         print(report)
 
     if args.test:
-        path = "data/test_images/tortue_5_right.jpg"
-        img_cv = cv2.imread(path)
-        preprocess_img_2(img_cv, side="right")
+        path = "data/test_images/cygne_20_left.jpg"
+        path1 = "data/test_images/bateau_8_right.jpg"
+        img_cv = cv2.imread(path1)
+
+        print(tangram_game_dist(side="right", image=path1, prepro=False))
+        # preprocess_img_original(img_cv, side="right")
         # print(path)
         # print(tangram_game(image=path, side="right", prepro=False))
     

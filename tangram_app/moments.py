@@ -82,7 +82,7 @@ def get_predictions(image, hu_moments, target, side=None, prepro=False):
     HuMo = np.hstack(HuMo)
 
     # get distances
-    dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
+    dist = hu_moments.apply(lambda row : dist_humoment4(HuMo, row.values[:-1]), axis=1)
     dist_labelled = pd.concat([dist, target], axis=1)
     dist_labelled.columns = ['distance', 'target']
 
