@@ -119,9 +119,9 @@ def preprocess_img_2(origin_img):
 def extract_triangles_squares_2(cnts, img):    
     cnts_output = []
     out_image = np.zeros(img.shape, img.dtype)
-#     cv2.imshow('img',img)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
+    # cv2.imshow('img',img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     
     for idx,cnt in enumerate(cnts):
         perimetre = cv2.arcLength(cnt, True)
@@ -146,11 +146,28 @@ def extract_triangles_squares_2(cnts, img):
                     
     return cnts_output,out_image
     
+def crop(img, side="left"):
+    """
+    crop the left or right side of the image 
 
-if __name__ == "__main__":
-    # testing the contour of the image => see with Renata how to include it to integration tests
-    img_cv = cv2.imread('data/tangrams/renard.jpg')
-    cnts, img = preprocess_img(img_cv, crop=False)
-    display_contour(cnts, img)
+    Parameters:
+    - img : OpenCV
+    - side : left / right
 
-#test
+    Returns : OpenCV image
+    """
+    assert side in ["left", "right"], "not a valid side"
+
+    # we take only 55% of the frame either left or right side
+    width_img = img.shape[1]
+    print(width_img)
+    box_width = int(width_img*0.55)
+    
+    if side == 'left':
+        img = img[:, :box_width]
+    else:
+        box_width = width_img - box_width
+        img = img[:, box_width:width_img]
+    
+    return img
+
