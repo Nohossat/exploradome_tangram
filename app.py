@@ -53,4 +53,4 @@ def tangram_game(side, crop, video=0, image = False):
         cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    tangram_game(video=False, image = 'cygne', side="left", crop=False)
+    tangram_game(side="left",  crop=False, video=False, image = 'cygne')

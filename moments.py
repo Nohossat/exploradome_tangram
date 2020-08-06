@@ -66,15 +66,16 @@ def get_predictions(image, hu_moments, target, side, crop = True):
     """
 
     # Our operations on the frame come here
-    cnts, img = preprocess_img(image, left_side=side, crop = crop)
+    cnts, img = preprocess_img(image, side=side, crop = crop)
     HuMo = np.hstack(find_moments(cnts))
 
     # get distances
-    dist = hu_moments.apply(lambda row : dist_humoment2(HuMo, row.values[:-1]), axis=1)
+    dist = hu_moments.apply(lambda row : dist_humoment4(HuMo, row.values[:-1]), axis=1)
     dist_labelled = pd.concat([dist, target], axis=1)
     dist_labelled.columns = ['distance', 'target']
     print(dist_labelled.sort_values(by=["distance"]))
 
-    proba_labelled['proba'] =  round((1/proba_labelled['distance']) / np.sum( 1/proba_labelled['distance'], axis=0),2)
-    print(proba_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']])
+    dist_labelled['proba'] =  round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
+    #dist_labelled['proba'] =  round(np.exp(1/dist_labelled['distance']) / np.sum(np.exp(1/dist_labelled['distance']),axis=0),3)
+    print(dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']])
 
