@@ -37,8 +37,8 @@ Find the best accuracy for the model
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
 
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/metric..jpg"></p>
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/matrice.png"></p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/metric..jpg"></p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/matrice.png"></p>
 
 ## Configuration
 Data 
