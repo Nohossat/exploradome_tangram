@@ -102,17 +102,21 @@ def display_contour(cnts, img):
     cv2.imshow("Image", img)
     cv2.waitKey(0)
 
-def preprocess_img_2(origin_img):
-    img = cv2.Canny(origin_img, 30,300)
+def preprocess_img_2(origin_img,side):
+    img = cv2.Canny(origin_img, 100,300)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+    img = cv2.dilate(img, kernel)
+    
     img = cv2.threshold(img.copy(), 0, 255, cv2.THRESH_BINARY)[1]
     cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    # for c in cnts:
-    #     cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 2)
-    cnts_output, triangle_squares_img = extract_triangles_squares_2(cnts,img)
-    
+    for c in cnts:
+        cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 2)
+    cnts_output, triangle_squares_img = extract_triangles_squares(cnts,img)
     return cnts_output
 
-def extract_triangles_squares_2(cnts, img):    
+    #return cnts_output, triangle_squares_img
+
+def extract_triangles_squares(cnts, img):    
     cnts_output = []
     out_image = np.zeros(img.shape, img.dtype)
 #     cv2.imshow('img',img)
@@ -121,7 +125,7 @@ def extract_triangles_squares_2(cnts, img):
     
     for idx,cnt in enumerate(cnts):
         perimetre = cv2.arcLength(cnt, True)
-        approx = cv2.approxPolyDP(cnt, 0.03 * perimetre, True)
+        approx = cv2.approxPolyDP(cnt, 0.02    * perimetre, True)
         area = cv2.contourArea(cnt)
         img_area = img.shape[0] * img.shape[1]
         
@@ -129,17 +133,21 @@ def extract_triangles_squares_2(cnts, img):
             # for triangle
             if len(approx) == 3:
                 cnts_output.append(cnt)
-                cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 3)
-                cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))# ??
+                cv2.drawContours(img, [cnt], -1, (50, 255, 50), 3)
+                cv2.fillPoly(img, pts =[cnt], color=(50, 255, 50))# ??
             # for quadrilater
             elif len(approx) == 4:
                 (x, y, w, h) = cv2.boundingRect(approx)
                 ratio = w / float(h)
                 if(ratio >= 0.2 and ratio <= 4):
                     cnts_output.append(cnt)
-                    cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 3)
-                    cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))
+                    cv2.drawContours(img, [cnt], -1, (50, 255, 50), 3)
+                    cv2.fillPoly(img, pts =[cnt], color=(50, 255, 50))
                     
+    # cv2.imshow('img',img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
     return cnts_output,out_image
     
 
