@@ -1,8 +1,19 @@
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
+[![Build Status](https://travis-ci.org/anfederico/Clairvoyant.svg?branch=master)](https://travis-ci.org/anfederico/Clairvoyant)
+![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)
+[![GitHub Issues](https://img.shields.io/github/issues/anfederico/Clairvoyant.svg)](https://github.com/anfederico/Clairvoyant/issues)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+
 # exploradome_tangram
 Tangram form detection from live video stream in the real time. 
 We use intermediate stages crop, contrast
 
 In order to run this annotation tool, run 'main.py' file.
+
+
 
 ## Installation and Usage
 
@@ -29,7 +40,8 @@ Find the best accuracy for the model
 Calculation distances geometrics by analyse of contours
 Keywords : Hu Moments, moments, distances
 
-/data/metric.jpg
+<p align="center"><img width=12.5% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/metric..jpg"></p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/matrice.jpg"></p>
 
 ## Configuration
 Data 
