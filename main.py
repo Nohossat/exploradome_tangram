@@ -15,15 +15,20 @@ if __name__ == '__main__':
 
     # cli options
     parser = argparse.ArgumentParser(description="Tangram detection\n")
-    parser.add_argument('-m', '--mode', help='analyze picture or video', default=False) # default to webcam
-    parser.add_argument('-s', '--side', help='analyze left / right or the full frame', default="left")
-    parser.add_argument('-metrics', '--metrics', help='get metrics of our model', default=False)
+    # default to webcam
+    parser.add_argument(
+        '-m', '--mode', help='analyze picture or video', default=False)
+    parser.add_argument(
+        '-s', '--side', help='analyze left / right or the full frame', default="left")
+    parser.add_argument('-metrics', '--metrics',
+                        help='get metrics of our model', default=False)
     parser.add_argument('-test', '--test', help='test prepro', default=False)
     args = parser.parse_args()
 
     # check args.side value
     if args.side:
-        assert args.side in ["right", "left", "none"], "Select a valid side : left - right"
+        assert args.side in ["right", "left",
+                             "none"], "Select a valid side : left - right"
 
     if args.mode:
         if args.mode.endswith((".jpg", ".png")):
@@ -49,6 +54,14 @@ if __name__ == '__main__':
         path = "data/test_images/cygne_20_left.jpg"
         path1 = "data/test_images/bateau_1_right.jpg"
         img_cv = cv2.imread(path1)
+<<<<<<< HEAD
         print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists))
     
     
+=======
+        print("hello")
+        print(tangram_game_dist(side="right", image=path1, prepro=False))
+        # preprocess_img_original(img_cv, side="right")
+        # print(path)
+        # print(tangram_game(image=path, side="right", prepro=False))
+>>>>>>> 23676834feea54ad59cab06327375fbe4e0b2864
