@@ -39,7 +39,7 @@ if __name__ == '__main__':
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
             tangram_game(video=args.mode, side=args.side, prepro=preprocess_img_2, pred_func=img_to_sorted_dists)
         elif args.mode == "test":
-            path = "/Users/nohossat/Documents/exploradome_videos/valid_dataset/bateau_13_right.jpg"
+            path = "data/test_images/bateau_8_right.jpg"
             img_cv = cv2.imread(path)
             print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists))
         elif args.mode.isnumeric() and (int(args.mode) == 0 or int(args.mode) == 1): 
