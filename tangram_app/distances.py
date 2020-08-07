@@ -191,31 +191,18 @@ def distance_formes(contours):
             centers['parallelo'].append(parallelo_center)
             perimeters['parallelo'].append(parallelo_perimeter)
 
+    for key, value in centers.items():
+        if len(value)> 1 :
+            for i in range(len(value)-1):
+                x1,y1 = value[i]
+                x2,y2 = value[i+1]
+                distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
+                if distance < 2:
+                    centers[key].remove(centers[key][i+1])
+                    perimeters[key].remove(perimeter[key][i + 1])
+                    break
+
     return centers, perimeters
-
-def unique_centers(centers):
-    centres_unique_form = {}
-
-    for x, y in centers.items():
-        center = [0, 0]
-        for ele in y:
-            i, j = ele
-            center[0] += i
-            center[1] += j
-        centres_unique_form[x] = (
-            int(center[0] / len(y)), int(center[1] / len(y)))
-    return centres_unique_form
-
-def distance_forme(centers):
-    distances = {}
-    for forme1, center1 in centers.items():
-        for forme2, center2 in centers.items():
-            if forme1 != forme2:
-                x1, y1 = center1
-                x2, y2 = center2
-                distances[forme1 + "-" +
-                          forme2] = round(math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)), 2)
-    return distances
 
 def ratio_distance(centers, perimeters):
     distances = {}
