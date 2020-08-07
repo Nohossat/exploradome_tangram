@@ -6,6 +6,9 @@ def img_to_sorted_dists(img_cv, side, prepro):
     cnts, cropped_img = prepro(img_cv, side=side)
     image, contours = merge_tangram(cropped_img, cnts)
 
+    for c in contours:
+        cv2.drawContours(cropped_img, [c], -1, (50, 255, 50), 2)
+
     centers, perimeters = distance_formes(cnts)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
