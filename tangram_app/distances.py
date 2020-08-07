@@ -199,8 +199,9 @@ def distance_formes(contours):
                 distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
                 if distance < 2:
                     centers[key].remove(centers[key][i+1])
-                    perimeters[key].remove(perimeter[key][i + 1])
-                    break
+                    perimeters[key].remove(perimeter[key][i+1])
+        else:
+            perimeters[key] = 0
 
     return centers, perimeters
 
