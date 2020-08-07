@@ -3,8 +3,6 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
-from .distances import *
-from .processing import *
 
 def find_moments(cnts, filename=None, hu_moment = True):
     '''
@@ -47,49 +45,40 @@ def find_moments(cnts, filename=None, hu_moment = True):
     except Exception as e:
         return [] # predictions impossible
 
-def get_predictions(image, hu_moments, target, side=None, prepro=False):
+def save_moments(images, directory):
     """
-    compare moments of a frame with the hu moments of our dataset images  
-
-    =========
+    compute moments / hu moments for all images in our dataset
 
     Parameters : 
 
-    image : OpenCV image
-    hu_moments : dataset with the humoments of each class
-    target : name of the classes
-    side : which side should be analyzed - left / right / full image
+    images : dict with images names and paths
 
     ========
-
-    Return : print the probabilities to belong to each class in descending order (Pandas DataFrame)
+    Return : save moments and hu_moments into CSV files and return them as Pandas dataframe
 
     author : @Nohossat
     """
 
-    # Our operations on the frame come here
-    if not prepro : #take default prepro
-        cnts = preprocess_img(image, side=side)
-    else : # special prepro
-        cnts = prepro(image, side=side)
-    print(type(cnts),cnts)
-    HuMo = find_moments(cnts)
+    hu_moments = []
+    moments = []
 
-    if len(HuMo) == 0 : 
-        return None, None # the image can't be processed, so empty predictions
+    for image_name, image_path in images:
+        img_cv = cv2.imread(image_path)
 
-    # with the hu_moments we can get the predictions
-    HuMo = np.hstack(HuMo)
+        pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+        result = pattern.search(image_path)
+        side = result.group(2)
 
-    # get distances
-    dist = hu_moments.apply(lambda row : dist_humoment4(HuMo, row.values[:-1]), axis=1)
-    dist_labelled = pd.concat([dist, target], axis=1)
-    dist_labelled.columns = ['distance', 'target']
+        cnts = preprocess_img(img_cv, side=side)
 
-    # get probabilities
-    dist_labelled['proba'] = round((1/dist_labelled['distance']) / np.sum( 1/dist_labelled['distance'], axis=0),2)
-    probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']]
+        hu_moments.append(find_moments(cnts, image_name))
+        moments.append(find_moments(cnts, image_name, hu_moment=False))
+
+        hu_moments_df = pd.DataFrame(hu_moments)
+        hu_moments_df.to_csv(directory +'/hu_moments.csv', index=False)
+
+        moments_df = pd.DataFrame(moments)
+        moments_df.to_csv(directory + '/moments.csv', index=False)
+
+    return hu_moments_df, moments_df
     
-    # sorted probabilities
-    return probas.reset_index(drop=True), cnts
-

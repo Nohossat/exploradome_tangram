@@ -3,11 +3,12 @@ import numpy as np
 import imutils
 import pandas as pd
 import os
-from .moments import get_predictions
-from .prepare_tangrams_dataset import get_files
 import re
-from .compute_distances import *
 import pprint
+
+# files from the app
+from .processing import preprocess_img
+from .predictions import *
 
 
 """
@@ -15,8 +16,7 @@ main entry in the application: tangram_game
 you can do live testing with the tangram_game_live_test
 """
 
-# test new algo Gautier 
-def tangram_game_dist(side=None, video=0, image=False, prepro=False):
+def tangram_game(side=None, video=0, image=False, prepro=preprocess_img, pred_func=get_predictions):
     """
     analyze image or video stream to give the probabilities of the image / frame 
     to belong to each class of our dataset
@@ -47,141 +47,39 @@ def tangram_game_dist(side=None, video=0, image=False, prepro=False):
 
         # pass side and image to get predictions function
         img_cv = cv2.imread(image)
-        distances = img_to_sorted_dists(img_cv, side, prepro=prepro)
-        
-        # get distances
-        data = pd.read_csv("data/data.csv", sep=";")
-        mses = np.array(mse_distances(data, distances))
-
-        # get proba
-        proba = np.round(1/mses/np.sum(1/mses), 3)
-
-        # get probabilities
-        probas_labelled = data[["classe"]]
-        probas_labelled.loc[:, "target"] = proba
-        return probas_labelled.sort_values(by=["target"], ascending=False)
-
-    # compare video frames with dataset images
-    if not isinstance(video, bool):
-        cap = cv2.VideoCapture(video)
-
-        while(cap.isOpened()):
-            ret, image = cap.read() # Capture frame-by-frame
-            distances = img_to_sorted_dists(img_cv, prepro=prepro)
-
-            # compute distances
-            data = pd.read_csv("data/data.csv", sep=";")
-            mses = np.array(mse_distances(data, distances))
-
-            # get proba
-            proba = np.round(1/mses/np.sum(1/mses), 3)
-            # get probabilities
-            probas_labelled = data[["classe"]]
-            probas_labelled.loc[:, "target"] = proba
-            print(probas_labelled.sort_values(by=["target"], ascending=False))
-
-            if cv2.waitKey(0) & 0xFF == ord('q'):
-                break
-
-        # When everything done, release the capture
-        cap.release()
-        cv2.destroyAllWindows()
-
-def tangram_game(hu_moments_dataset='data/hu_moments.csv', side=None, video=0, image=False, prepro=False):
-    """
-    analyze image or video stream to give the probabilities of the image / frame 
-    to belong to each class of our dataset
-
-    =========
-
-    Parameters : 
-
-    video : gives the channel to watch. False by default
-    image : gives the filename of the image we want to predict. False by default
-    side : the side to analyze on the frame : left / right / full frame (None)
-    crop : crop image if raw image
-
-    Returns : print predictions for each frame 
-
-    ========
-    author : @Nohossat
-    """
-
-    # get dataset
-    hu_moments = pd.read_csv(hu_moments_dataset)
-    target = hu_moments.iloc[:, -1]
-
-    # compare image with dataset images
-    if image :
-        assert os.path.exists(image), "the image doesn't exist"
-
-        # get size to analyze from image path
-        pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
-        result = pattern.search(image)
-        side = result.group(2)
-
-        # pass side and image to get predictions function
-        img_cv = cv2.imread(image)
-        predictions, cnts = get_predictions(img_cv, hu_moments, target, side = side, prepro=prepro) # retourne cnts so you can print them too
+        predictions = pred_func(img_cv, side = side, prepro=prepro)
         return predictions
 
     # compare video frames with dataset images
     if not isinstance(video, bool):
         cap = cv2.VideoCapture(video)
 
+        assert cap.isOpened(), "Unexpected error while reading video stream"
+
         while(cap.isOpened()):
             ret, image = cap.read() # Capture frame-by-frame
-            predictions, cnts = get_predictions(image, hu_moments, target, side = side, prepro=prepro) # retourne cnts so you can print them too
-            print(predictions)
 
-            if cv2.waitKey(0) & 0xFF == ord('q'):
+            if not ret:
+                print("we are done")
+                break
+
+            predictions = pred_func(image, side = side, prepro=prepro)
+            display_predictions(predictions, image, onscreen=True)
+
+            if cv2.waitKey(3) & 0xFF == ord('q'):
                 break
 
         # When everything done, release the capture
         cap.release()
         cv2.destroyAllWindows()
 
-def tangram_game_live_test(side=None, video=0,prepro=False):
+def display_predictions(predictions, image, onscreen=True):
     """
-    analyze video stream to give the probabilities of the image / frame 
-    to belong to each class of our dataset and display it
-
-    =========
-
-    Parameters : 
-
-    video : gives the channel to watch. Webcam (0) by default
-    side : the side to analyze on the frame : left / right / full frame (None)
-
-    Returns : print predictions for each frame
-
-    ========
-    author : @Nohossat
+    if onscreen True, we display the main proba on screen, otherwise we just print the 12 sorted probabilities
     """
-
-    # latest predictions - we record only the 100 latest predictions
-    latest_predictions = []
-
-    # get dataset
-    hu_moments = pd.read_csv('data/hu_moments.csv')
-    target = hu_moments.iloc[:, -1]
-
-    # compare video frames with dataset images
-    cap = cv2.VideoCapture(video)
-
-    assert cap.isOpened(), "Unexpected error while reading video stream"
-
-    while(cap.isOpened()):
-        ret, image = cap.read()
-
-        if not ret:
-            print("we are done")
-            break
-
-        predictions, cnts = get_predictions(image, hu_moments, target, side = side, prepro=prepro)
+    if onscreen:
         image = imutils.resize(image, width=1200)
         
-        # add prediction on the frame
         if predictions is None:
             prediction_label = "N/A"
             prediction_proba = 0
@@ -190,11 +88,10 @@ def tangram_game_live_test(side=None, video=0,prepro=False):
         else:
             prediction_label = predictions.loc[0, 'target']
             prediction_proba = predictions.loc[0, 'proba']
-            latest_predictions.append(prediction_label)
 
-            if cnts : 
-                for c in cnts:
-                    cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+            # if cnts : 
+                # for c in cnts:
+                    # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
         msg = f"Main proba : {prediction_label}"
 
@@ -228,16 +125,12 @@ def tangram_game_live_test(side=None, video=0,prepro=False):
         # display frame
         cv2.imshow('tangram', image)
         cv2.moveWindow('tangram', 30, 30)
+    else :
+        print(predictions)
 
-        # fine-tune the latest predictions in order to run the live testing code on several videos
-        if len(latest_predictions) > 10:
-            latest_predictions.remove(latest_predictions[0]) # get only the 190 latest predictions
+if __name__ == "__main__":
+    path = "data/test_images/cygne_20_left.jpg"
+    path1 = "data/test_images/bateau_1_right.jpg"
+    img_cv = cv2.imread(path1)
 
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
-
-    return latest_predictions[0]
+    print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists))
