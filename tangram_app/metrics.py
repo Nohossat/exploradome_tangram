@@ -1,13 +1,15 @@
-from .tangram_game import tangram_game
-from .utils import get_files
 import re
 import os
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 import seaborn as sns
 import matplotlib.pyplot as plt
+from .tangram_game import tangram_game
+from .utils import get_files
+from .processing import *
+from .predictions import *
 
 # test statiques
-def get_classification_report_pics(dataset_path=None, get_pred=tangram_game):
+def get_classification_report_pics(dataset_path=None, game=tangram_game):
     """
     from a set of images, get global accuracy, precision, recall
     """
@@ -24,16 +26,15 @@ def get_classification_report_pics(dataset_path=None, get_pred=tangram_game):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = get_pred(image = img_path)
-
+        predictions = game(image=img_path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists)
         if predictions is None:
             continue
 
-        if label != predictions.loc[0, 'classe']:
-            print(img_path, label, predictions.loc[0, 'classe'])
+        if label != predictions.loc[0, 'target']:
+            print(img_path, label, predictions.loc[0, 'target'])
 
         y_true.append(label)
-        y_pred.append(predictions.loc[0, 'classe'])
+        y_pred.append(predictions.loc[0, 'target'])
 
     # get metrics
     conf_matrix = confusion_matrix(y_true, y_pred, labels=classes)

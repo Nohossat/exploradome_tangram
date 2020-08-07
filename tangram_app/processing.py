@@ -17,31 +17,28 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
 
     img = crop(img, side=side)
     image_blurred = blur(img,3)
-    cnts = get_contours(image_blurred)
-    image_triangles_squares = extract_triangles_squares(cnts, img)
-    blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
-    final_cnts = get_contours(blurred_triangles_squared)
+    final_cnts = get_contours(image_blurred)
+    # image_triangles_squares = extract_triangles_squares(cnts, img)
+    # blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
+    # final_cnts = get_contours(blurred_triangles_squared)
     return final_cnts, img
 
 def preprocess_img_2(origin_img, side):
     origin_img = crop(origin_img, side=side)
-    img = cv2.Canny(origin_img, 100,300)
+    img = cv2.Canny(origin_img, 30, 300)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
     img = cv2.dilate(img, kernel)
-    
     img = cv2.threshold(img.copy(), 0, 255, cv2.THRESH_BINARY)[1]
-    cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    
-    # for c in cnts:
-        # cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 2)
+    cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    cnts_output, triangle_squares_img = extract_triangles_squares_2(cnts, img)
 
-    # cnts_output, triangle_squares_img = extract_triangles_squares(cnts,img)
-    # cv2.imshow("image", img)
+    # for c in cnts:
+        # cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 1)
+
+    # cv2.imshow("image", origin_img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return cnts, origin_img
-
-    #return cnts_output, triangle_squares_img
+    return cnts_output, origin_img
 
 def extract_triangles_squares(cnts, image):    
     cnts_output = []
@@ -78,13 +75,11 @@ def blur(img, strength_blur = 7, sensitivity_to_light=50):
     image_blurred = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY)[1]
     return image_blurred
 
-
 def get_contours(image):
     cnts = cv2.findContours(
         image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     return cnts
-
 
 def resize(img, side, percent=50):
     '''
@@ -109,7 +104,6 @@ def resize(img, side, percent=50):
         elif side == 'left':
             img = img[:-70, 50:470]
     return img
-
 
 def display_contour(cnts, img):
     """
@@ -156,9 +150,7 @@ def extract_triangles_squares_2(cnts, img):
     # cv2.imshow('img',img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-
     return cnts_output, out_image
-
 
 def crop(img, side="left"):
     """
@@ -181,6 +173,8 @@ def crop(img, side="left"):
     else:
         box_width = width_img - box_width
         img = img[:, box_width:width_img]
+
+    return img
 
 def contour_intersect(cnt_ref, cnt_query):
     """

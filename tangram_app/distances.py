@@ -82,7 +82,6 @@ def distance_formes(contours):
     formes = {"triangle": [], "squart": [], "parallelo": []}
 
     for cnt in contours:
-
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
         if len(approx) == 3:
