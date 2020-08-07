@@ -1,7 +1,7 @@
 <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/logo.jpg"></p>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
+![Python](https://img.shields.io/badge/python-v3.8-blue.svg)
 [![Build Status](https://travis-ci.org/anfederico/Clairvoyant.svg?branch=master)](https://travis-ci.org/anfederico/Clairvoyant)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -18,7 +18,7 @@ The output is 12 class probabilities, served at a minimum frequency of 1 output 
 ## Installation and execution
 
 ```shell
-git clone https://github.com/Nohossat/exploradome_tangram/tree/numpy---team-4
+git clone https://github.com/Nohossat/exploradome_tangram.git
 cd exploradome_tangram
 python -m venv venv/
 source venv/Scripts/activate # Windows
