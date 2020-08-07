@@ -54,14 +54,6 @@ if __name__ == '__main__':
         path = "data/test_images/cygne_20_left.jpg"
         path1 = "data/test_images/bateau_1_right.jpg"
         img_cv = cv2.imread(path1)
-<<<<<<< HEAD
         print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists))
     
     
-=======
-        print("hello")
-        print(tangram_game_dist(side="right", image=path1, prepro=False))
-        # preprocess_img_original(img_cv, side="right")
-        # print(path)
-        # print(tangram_game(image=path, side="right", prepro=False))
->>>>>>> 23676834feea54ad59cab06327375fbe4e0b2864
