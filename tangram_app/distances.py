@@ -92,7 +92,6 @@ def distance_formes(contours):
             (x, y, w, h) = cv2.boundingRect(approx)
 
             ratio = w / float(h)
-
             if ratio >= 0.9 and ratio <= 1.1:
                 formes["squart"].append(cnt)
 
@@ -121,10 +120,10 @@ def distance_formes(contours):
                     perimeters['smallTriangle'].append(triangle_perimeter)
                 elif rapport < 1.15:
                     centers['middleTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['middleTriangle'].append(triangle_perimeter)
                 else:
                     centers['bigTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['bigTriangle'].append(triangle_perimeter)
 
         # Comparer la taille des triangle à parallélograme unique
         elif len(formes["parallelo"]) == 1:
@@ -144,10 +143,10 @@ def distance_formes(contours):
                     perimeters['smallTriangle'].append(triangle_perimeter)
                 elif rapport < 1.5:
                     centers['middleTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['middleTriangle'].append(triangle_perimeter)
                 else:
                     centers['bigTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['bigTriangle'].append(triangle_perimeter)
 
         else:
 
@@ -171,10 +170,10 @@ def distance_formes(contours):
                         perimeters['smallTriangle'].append(triangle_perimeter)
                     elif max_triangle_area / cv2.contourArea(triangle) > 2:
                         centers['middleTriangle'].append(triangle_center)
-                        perimeters['smallTriangle'].append(triangle_perimeter)
+                        perimeters['middleTriangle'].append(triangle_perimeter)
                     else:
                         centers['bigTriangle'].append(triangle_center)
-                        perimeters['smallTriangle'].append(triangle_perimeter)
+                        perimeters['bigTriangle'].append(triangle_perimeter)
 
         for squart in formes['squart']:
             squart_perimeter = cv2.arcLength(squart, True)
@@ -191,6 +190,17 @@ def distance_formes(contours):
                 int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
             centers['parallelo'].append(parallelo_center)
             perimeters['parallelo'].append(parallelo_perimeter)
+
+        for key, value in centers.items():
+            if len(value)> 1 :
+                for i in range(len(value)):
+                    x1,y1 = value[i]
+                    x2,y2 = value[i+1]
+                    distance = math.sqrt(pow(x1-x2)+pow(y1-y2))
+                    if distance < 2:
+                        centers[key].remove(centers[key][i+1])
+                        perimeters[key].remove(perimeter[key][i + 1])
+                        break
 
     return centers, perimeters
 
