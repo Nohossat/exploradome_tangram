@@ -4,19 +4,15 @@ from .moments import *
 
 def img_to_sorted_dists(img_cv, side, prepro):
     cnts, cropped_img = prepro(img_cv, side=side)
+    image, contours = merge_tangram(cropped_img, cnts)
 
-    cnts_form = detect_forme(cnts, cropped_img)
-
-    # display contours
-    for c in cnts_form:
+    for c in contours:
         cv2.drawContours(cropped_img, [c], -1, (50, 255, 50), 2)
-    
-    # get contours + distances
-    image, contours = merge_tangram(cropped_img, cnts_form)
-    centers, perimeters = distance_formes(contours)
+
+    centers, perimeters = distance_formes(cnts)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
-
+    
     # get distances
     data = pd.read_csv("data/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
