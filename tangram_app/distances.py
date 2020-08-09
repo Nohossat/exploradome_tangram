@@ -97,8 +97,8 @@ def distance_formes(contours):
             elif (ratio >= 0.3 and ratio <= 3.3):
                 formes["parallelo"].append(cnt)
 
-    formes = delete_isolate_formes(formes)
-    
+    formes = delete_isolate_formes(formes,30)
+
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
     perimeters = {"smallTriangle": [], "middleTriangle": [],
@@ -200,47 +200,34 @@ def distance_formes(contours):
                 distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
                 if distance < 2:
                     centers[key].remove(centers[key][i+1])
-                    perimeters[key].remove(perimeter[key][i+1])
+                    perimeters[key].remove(perimeters[key][i+1])
         else:
-            perimeters[key] = 0           
+            perimeters[key] = []        
 
     return centers, perimeters
 
 def delete_isolate_formes2(formes, threshold=10):
-    #forme_to_delete = {}
-    #forme_centers = {}  
-    # for keys, value in formes.items():
-    #     forme_centers[keys] = []
-    #     for i  in range(len(value)):
-    #         M = cv2.moments(value[i])
-    #         forme_centers[keys].append([int(M["m10"] / M["m00"]),int(M["m01"] / M["m00"])])
+    forme_to_delete = {}
+    forme_centers = {}  
+    for keys1, values1 in formes.items():
+        forme_centers[keys1] = []
+        for i  in range(len(values1)):
+            M1 = cv2.moments(values1[i])
+            center_i_x, center_i_y = [int(M1["m10"] / M1["m00"]),int(M1["m01"] / M1["m00"])]
+            for keys2, values2 in formes.items():
+                for j  in range(len(values2)):
+                    if keys1 != keys2 and i != j:
+                        M2 = cv2.moments(values2[j])
+                        center_j_x, center_j_y = [int(M2["m10"] / M2["m00"]),int(M2["m01"] / M2["m00"])]
+                        distance1 = np.array([math.sqrt(pow(point1[0]+center_i_x,2)+pow(point1[1]-center_i_y,2)) for point1 in formes[keys1][i].reshape(-1,2)])
+                        distance2 = np.array([math.sqrt(pow(point2[0]+center_j_x,2)+pow(point2[1]-center_j_y,2)) for point2 in formes[keys2][j].reshape(-1,2)])
+                        lessdist_cnt2 = formes[keys1][i].reshape(-1,2)[np.argmin(distance1)] 
+                        lessdist_cnt1 = formes[keys2][j].reshape(-1,2)[np.argmin(distance2)]     
+            distance = math.sqrt(pow(lessdist_cnt2[0]-lessdist_cnt1[0],2)+pow(lessdist_cnt2[1]-lessdist_cnt1[1],2))
+            forme_centers[keys1].append(distance)
+    print(forme_centers)
 
-
-    #forme_to_delete = {}
-    #forme_centers = {}  
-    # for keys, value in formes.items():
-    #     forme_centers[keys] = []
-    #     for i  in range(len(value)):
-    #         M = cv2.moments(value[i])
-    #         forme_centers[keys].append([int(M["m10"] / M["m00"]),int(M["m01"] / M["m00"])])
-    
-    # center_i = forme_centers[keys1][i]
-                        # center_j = forme_centers[keys2][j]
-                        
-                        # center_i_x, center_i_y = center_i[0],center_i[1]
-                        # center_j_x, center_j_y = center_j[0],center_j[1]
-
-                        # cnt1 = cnt1.reshape(-1,2)
-                        # cnt2 = cnt2.reshape(-1,2)
-                        # #print(type(cnt1), print(type(center_i)))
-                        # distance1 = np.array([math.sqrt(pow(point1[0]+center_i_x,2)-pow(point1[1]-center_i_y,2)) for point1 in cnt1])
-                        # distance2 = np.array([math.sqrt(pow(point2[0]+center_j_x,2)-pow(point2[1]-center_j_y,2)) for point2 in cnt2])
-                        # lessdist_cnt2 = cnt1[np.argmin(distance1)] 
-                        # lessdist_cnt1 = cnt2[np.argmin(distance2)]
-                        # print(math.sqrt(pow(lessdist_cnt2[0]-lessdist_cnt1[0],2)+pow(lessdist_cnt2[1]-lessdist_cnt1[1],2)))
-    pass
-
-def delete_isolate_formes(formes, threshold=10):
+def delete_isolate_formes(formes, threshold=4):
     mindistances = {}
     for keys1, formes1 in formes.items():
         mindistances[keys1] = []
@@ -253,9 +240,8 @@ def delete_isolate_formes(formes, threshold=10):
                         cnt2 = formes2[j]
                         distance = minDistance(cnt1,cnt2)
                         distances.append(distance)
-                        
-            mindistances[keys1].append(min(distances)) 
-            
+            if len(distances)>0:  
+                mindistances[keys1].append(min(distances)) 
     forme_output = {}
     for keys, values in mindistances.items():
         forme_output[keys] = []
@@ -272,42 +258,9 @@ def minDistance(contour, contourOther):
             for xA, yA in point1:
                 for xB, yB in point2:
                     distance = ((xB-xA)**2+(yB-yA)**2)**(1/2) # distance formula
-                    if (distance < distanceMin):
+                    if (distance < distanceMin and distance > 0 ):
                         distanceMin = distance
-    return distanceMin    
-
-    # for keys1, formes1 in formes.items():
-    #     forme_to_delete[keys1] = []
-    #     for keys2, formes2 in formes.items():
-    #         for i in range(len(formes1)):
-    #             is_isolate_forme = False
-    #             for j in range(len(formes2)):
-    #                 cnt1 = formes1[i]
-    #                 cnt2 = formes2[j]
-
-    #                 if keys1 != keys2 and i != j:
-                        
-    #                     if is_isolate(cnt1, cnt2):
-    #                         is_isolate_forme = True
-                
-    #             if is_isolate_forme and i not in forme_to_delete[keys1]:
-    #                  forme_to_delete[keys1].append(i)
-    #return forme_centers
-#print("distance",keys1+str(i),keys2+str(j), distance)
-# def is_isolate(cnt1, cnt2):
-#     for point1 in cnt1:
-#         pt1 = point1.reshape(-1)
-#         pt1_abscissa = pt1[0]
-#         pt1_ordinate = pt1[1]
-#         for point2 in cnt2:
-#             pt2 = point2.reshape(-1)
-#             pt2_abscissa = pt2[0]
-#             pt2_ordinate = pt2[1]
-#             distance = math.sqrt(pow(pt1_abscissa-pt2_abscissa,2)+pow(pt1_ordinate-pt2_ordinate,2))
-#             if distance < 2:
-#                 return False
-#     return True
-
+    return distanceMin 
 
 def ratio_distance(centers, perimeters):
     distances = {}
