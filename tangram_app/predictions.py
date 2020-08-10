@@ -15,22 +15,18 @@ def get_predictions_with_distances(img_cv, side, prepro):
     '''
     pp = pprint.PrettyPrinter(depth=4)
     cnts, cropped_img = prepro(img_cv, side=side)
-    image, contours = merge_tangram(cropped_img, cnts)
 
-    for c in contours:
+    for c in cnts:
         cv2.drawContours(cropped_img, [c], -1, (50, 255, 50), 2)
 
     centers, perimeters = distance_formes(cnts)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
 
-    # pp.pprint(sorted_dists)
-
     # get distances
     data = pd.read_csv("data/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
     
-    # pp.pprint(mses)
 
     # get proba
     if np.all((mses == 0)):

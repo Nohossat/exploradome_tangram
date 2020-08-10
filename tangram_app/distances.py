@@ -6,40 +6,6 @@ import imutils
 import math
 import pandas as pd
 
-
-# different ways to calculate distances between Hu Moments
-def dist_humoment1(hu1,hu2):
-    """
-    return sum absolute difference of inverse of humoment value
-    author: @Gautier
-    """
-    distance =  np.sum(abs(1/hu1-1/hu2))
-    return distance
-
-def dist_humoment2(hu1,hu2):
-    """
-    return the sum of manatan distance, sum of absolute difference
-    author: @Gautier
-    """
-    distance =  np.sum(abs(hu1-hu2))
-    return distance
-
-def dist_humoment3(hu1,hu2):
-    """
-    return sum of absolute difference  divide absolute of second humoment
-    author: @Gautier
-    """
-    distance =  np.sum(abs(hu1-hu2)/abs(hu2))
-    return distance
-
-def dist_humoment4(hu1,hu2):
-    """
-    return sum of euclidienne distance,sum of squart of pow difference
-    author: @Gautier
-    """
-    distance = np.linalg.norm(hu1-hu2)
-    return distance
-
 # see what functions we really use in the following ones @Gautier
 def detect_forme(cnts, image):
     '''
@@ -75,22 +41,19 @@ def detect_forme(cnts, image):
 
     return cnts_output
 
-def merge_tangram(image, contours):
-    '''
-    This functions puts all shapes in a black background image, it deletes all others shapes
-    author: @Gautier
-    ================================
-    Parameter:
-     @image: the original image
-     @contours: all contours that returns last function
-    '''
-    
-    # Create a new black image
-    out_image = np.zeros(image.shape, image.dtype)
+def get_area_ratio(contour_shape,formes):
+    area_norm = 0.01
+    if len(formes["squart"]) == 1:
+        area_norm = cv2.contourArea(formes["squart"][0])
+    elif len(formes["parallelo"]) == 1:
+        area_norm = cv2.contourArea(formes["paralello"][0])
+    else: 
+        min_triangle_area = min(triangleArea)
+        max_triangle_area = max(triangleArea)
 
-    # Put all our contours formes with white color
-    cv2.drawContours(out_image, contours, -1, (255, 255, 255), thickness=-1)
-    return out_image, contours
+    areaTriangle = cv2.contourArea(triangle)
+    return area_ratio
+
 
 def distance_formes(contours):
     '''
@@ -113,7 +76,6 @@ def distance_formes(contours):
         # if the shape has 4 angles we consider this shape is a quadrilateral
         elif len(approx) == 4:
             (x, y, w, h) = cv2.boundingRect(approx)
-
             ratio = w / float(h)
             
              # if the quadrilateral has this ratio between height and width, we consider this is a square
@@ -189,7 +151,6 @@ def distance_formes(contours):
             # else we compare between the bigger triangle and the smaller triangle
             triangleArea = [cv2.contourArea(triangle)  for triangle in formes['triangle']]
             min_triangle_area = min(triangleArea)
-
             max_triangle_area = max(triangleArea)
 
             # Si c'est plus grand triangle avec plus petit triangle
@@ -230,17 +191,28 @@ def distance_formes(contours):
             perimeters['parallelo'].append(parallelo_perimeter)
 
     # Remove duplicate shapes
-    for key,values in centers.items():
-        lst_unique_idx = []
-        nb_duplicates = []
-        for idx,tupley in enumerate(values):
-            distances = [np.linalg.norm(np.array(tupley)-np.array(centroid)) for centroid in values]
-            nb_duplicates = len([distance for distance in distances if distance<20])
-        
-        if nb_duplicates == 0:
-            lst_unique_idx.append(idx)
+    centers2 = {}
+    perimeters2 = {}
 
-    return centers, perimeters
+    for key,values in centers.items():
+        if(len(values)) > 0:
+            centers2[key] = [centers[key][0]]
+            perimeters2[key] = [perimeters[key][0]]
+            for i in range(1,len(values)):
+                x1, y1 = values[i]
+                isDistanceBigger = True
+                for j in range(i):
+                    x2, y2 = values[j]
+                    distance = round(math.sqrt(pow(x1 - x2, 2)+pow(y1 - y2, 2)),2)
+                    if distance < 20:
+                        isDistanceBigger = False
+                if isDistanceBigger:
+                    centers2[key].append(centers[key][i])
+                    perimeters2[key].append(perimeters[key][i])
+
+    # print(centers)
+    return centers2, perimeters2
+
 
 def delete_isolate_formes3(formes, threshold=10):
     mindistances = {}
