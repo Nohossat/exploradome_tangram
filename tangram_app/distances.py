@@ -228,18 +228,15 @@ def distance_formes(contours):
 
     # Remove duplicate shapes
 
-    for key, value in centers.items():
-        if len(value)> 1 :
-            for i in range(len(value)-1):
-
-                distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
-                if distance < 2:
-                    centers[key].remove(centers[key][i+1])
-                    perimeters[key].remove(perimeters[key][i+1])
-        else:
-            perimeters[key] = []        
-    print(centers)
-    
+    for key,values in centers.items():
+        lst_unique_idx = []
+        for idx,tupley in enumerate(values):
+            distances = [np.linalg.norm(np.array(tupley)-np.array(centroid)) for centroid in values]
+            nb_duplicates = len([distance for distance in distances if distance<5])
+            if nb_duplicates == 1:
+                lst_unique_idx.append(idx)
+        centers[key] = [values[idx] for idx in lst_unique_idx]
+        perimeters[key] = [perimeters[key][idx] for idx in lst_unique_idx]    
 
     
     return centers, perimeters
