@@ -2,7 +2,7 @@ from .processing import *
 from .distances import *
 from .moments import *
 
-def img_to_sorted_dists(img_cv, side, prepro):
+def get_predictions_with_distances(img_cv, side, prepro):
     cnts, cropped_img = prepro(img_cv, side=side)
     image, contours = merge_tangram(cropped_img, cnts)
 

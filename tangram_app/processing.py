@@ -176,22 +176,20 @@ def crop(img, side="left"):
 
     return img
 
-def contour_intersect(cnt_ref, cnt_query):
+def contour_intersect(main_cnt, new_cnt):
     """
-    check if contour cnt_query intersect with the main one (cnt_ref)
+    check if contour new_cnt intersect with the main one (main_cnt)
     """
     intersecting_pts = []
-    # print(cnt_ref)
-    # print(cnt_query)
 
     ## Loop through all points in the contour
-    for pt in cnt_query:
+    for pt in new_cnt:
         x,y = pt[0]
 
         ## find point that intersect the reference contour
         ## edges_only flag check if the intersection to detect is only at the edges of the contour
         i = 0
-        for cnt in cnt_ref:
+        for cnt in main_cnt:
             if [[x, y]] in cnt:
                 if i == 0:
                     print([[x, y]])

@@ -80,8 +80,8 @@ def merge_tangram(image, contours):
 
 def distance_formes(contours):
     formes = {"triangle": [], "squart": [], "parallelo": []}
+    
     for cnt in contours:
-        
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
         if len(approx) == 3:
@@ -97,7 +97,7 @@ def distance_formes(contours):
             elif (ratio >= 0.3 and ratio <= 3.3):
                 formes["parallelo"].append(cnt)
 
-    formes = delete_isolate_formes(formes,30)
+    # formes = delete_isolate_formes(formes,30)
 
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
@@ -192,9 +192,13 @@ def distance_formes(contours):
             centers['parallelo'].append(parallelo_center)
             perimeters['parallelo'].append(parallelo_perimeter)
 
+    # retourner les formes plus proches
+
+    # calcul doublons
     for key, value in centers.items():
         if len(value)> 1 :
             for i in range(len(value)-1):
+                print(len(value))
                 #x1,y1 = value[i]
                 #x2,y2 = value[i+1]
                 distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
