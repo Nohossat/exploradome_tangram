@@ -107,3 +107,6 @@ To that goal, changing the preprocessing pipeline (from a binary threshold to ca
 
 - Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. However, this approach turned out to give poor predictions for incomplete shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
 
+# Team
+[Contribution guidelines for this project](https://github.com/Nohossat)
+
