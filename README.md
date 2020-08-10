@@ -85,13 +85,14 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
 <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/original.JPG"></p>
 
- 2) Find the form 
- 
- <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
- 
- 3) Detect edges
+ 2) Detect edges
  
 <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/canny_edge.JPG"></p>
+
+3) Find the form 
+ 
+ <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
+
 
 ## Classification results
 
