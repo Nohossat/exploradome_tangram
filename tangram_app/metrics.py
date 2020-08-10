@@ -26,7 +26,7 @@ def get_classification_report_pics(dataset_path=None, game=tangram_game):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = game(image=img_path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists)
+        predictions = game(image=img_path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
         if predictions is None:
             continue
 
