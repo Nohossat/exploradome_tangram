@@ -32,6 +32,7 @@ Within the framework of the project, 12 tangram selected shapes act as classes f
  - Rabbit (Lapin)
  - Swan (Cygne)
  - Turtle (Tortue)
+<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
 
 ## Installation
 
