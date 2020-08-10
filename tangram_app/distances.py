@@ -125,7 +125,7 @@ def distance_formes(contours):
                 formes["parallelo"].append(cnt)
                 
     # Remove isolated shapes
-    formes = delete_isolate_formes3(formes,200)
+    formes = delete_isolate_formes3(formes,300)
 
     # dictionnay to take barycenters of all shapes
     centers = {"smallTriangle": [], "middleTriangle": [],

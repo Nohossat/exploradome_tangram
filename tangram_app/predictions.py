@@ -1,6 +1,7 @@
 from .processing import *
 from .distances import *
 from .moments import *
+import pprint
 
 def get_predictions_with_distances(img_cv, side, prepro):
     '''
@@ -12,7 +13,7 @@ def get_predictions_with_distances(img_cv, side, prepro):
      @side: it take the position of the table, if side is left we take just the left side of table, right we take the right side
      @prepro: function of preprocessing
     '''
-    
+    pp = pprint.PrettyPrinter(depth=4)
     cnts, cropped_img = prepro(img_cv, side=side)
     image, contours = merge_tangram(cropped_img, cnts)
 
@@ -22,10 +23,15 @@ def get_predictions_with_distances(img_cv, side, prepro):
     centers, perimeters = distance_formes(cnts)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
-    
+
+    pp.pprint(sorted_dists)
+
     # get distances
     data = pd.read_csv("data/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
+
+    
+    pp.pprint(mses)
 
     # get proba
     if np.all((mses == 0)):

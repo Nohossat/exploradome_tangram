@@ -7,6 +7,7 @@ from .tangram_game import tangram_game
 from .utils import get_files
 from .processing import *
 from .predictions import *
+from sklearn.metrics import classification_report, confusion_matrix
 
 # test statiques
 def get_classification_report_pics(dataset_path=None, game=tangram_game):
