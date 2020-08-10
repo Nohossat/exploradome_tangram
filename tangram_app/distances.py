@@ -106,7 +106,7 @@ def distance_formes(contours):
     
     for cnt in contours:
         perimetre = cv2.arcLength(cnt, True)
-        approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
+        approx = cv2.approxPolyDP(cnt, 0.05 * perimetre, True)
         # if the shape has 3 angles we consider this shape is a triangle
         if len(approx) == 3:
             formes["triangle"].append(cnt)
@@ -232,13 +232,13 @@ def distance_formes(contours):
         lst_unique_idx = []
         for idx,tupley in enumerate(values):
             distances = [np.linalg.norm(np.array(tupley)-np.array(centroid)) for centroid in values]
-            nb_duplicates = len([distance for distance in distances if distance<5])
+            nb_duplicates = len([distance for distance in distances if distance<50])
             if nb_duplicates == 1:
                 lst_unique_idx.append(idx)
         centers[key] = [values[idx] for idx in lst_unique_idx]
-        perimeters[key] = [perimeters[key][idx] for idx in lst_unique_idx]    
+        perimeters[key] = [perimeters[key][idx] for idx in lst_unique_idx]
 
-    
+    print(centers)
     return centers, perimeters
 
 def delete_isolate_formes(formes, threshold=10):
