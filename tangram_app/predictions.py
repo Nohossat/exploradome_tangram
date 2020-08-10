@@ -24,14 +24,13 @@ def get_predictions_with_distances(img_cv, side, prepro):
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
 
-    pp.pprint(sorted_dists)
+    # pp.pprint(sorted_dists)
 
     # get distances
     data = pd.read_csv("data/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
-
     
-    pp.pprint(mses)
+    # pp.pprint(mses)
 
     # get proba
     if np.all((mses == 0)):
