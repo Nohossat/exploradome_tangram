@@ -12,3 +12,5 @@ def test_tangram_game():
    assert isinstance(probability, pd.core.frame.DataFrame), 'Predictions should be dataframe'
    assert probability.loc[0, 'target'] == 'bateau', 'Predictions should be bateau'
    
+def test_display_predictions():
+   pass
