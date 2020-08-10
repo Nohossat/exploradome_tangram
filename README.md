@@ -81,7 +81,17 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
 ### Pre-processing
 
-![Image 1](/Users/macbook/Downloads/canny_edge.JPG)
+ 1) Our original image
+
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/original.JPG"></p>
+
+ 2) Find the form 
+ 
+ <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
+ 
+ 3) Detect edges
+ 
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/canny_edge.JPG"></p>
 
 ## Classification results
 
@@ -90,8 +100,6 @@ Frames per seconds : 333 fps
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
-<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/metric.jpg"></p>
-<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/matrice.png"></p>
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
