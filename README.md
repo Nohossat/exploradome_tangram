@@ -47,7 +47,7 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 - Calculating the distance between each pair of pieces (resulting in 21 data points if all pieces are on the board).
 - Comparing this distance scorecard to the distance scorecard of each of the 12 target outlines (using an RMSE distance metric over the 21 distance readings)
 - Transforming the RMSE into a probability distribution.
-
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
 ## Classification results
 
 Frame per seconds : 333 fps
