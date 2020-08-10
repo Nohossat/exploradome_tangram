@@ -195,9 +195,11 @@ def distance_formes(contours):
     perimeters2 = {}
 
     for key,values in centers.items():
+        centers2[key] = []
+        perimeters2[key] = []
         if(len(values)) > 0:
-            centers2[key] = [centers[key][0]]
-            perimeters2[key] = [perimeters[key][0]]
+            centers2[key].append(centers[key][0])
+            perimeters2[key].append(perimeters[key][0])
             for i in range(1,len(values)):
                 x1, y1 = values[i]
                 isDistanceBigger = True
