@@ -96,14 +96,19 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
 ## Classification results
 
-Frames per seconds : 333 fps
+Frames per seconds : 20 fps
 
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
 
+
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
+
+![Confusion matrix](./tests/confusion_matrix.png)
+
+![Classification metrics](./tests/classification_metrics.png)
 
 
 ## Project metainformation
