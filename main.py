@@ -33,18 +33,18 @@ if __name__ == '__main__':
         if args.mode.endswith((".jpg", ".png")):
             # static testing
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
-            print(tangram_game(image=args.mode, prepro=preprocess_img_2, pred_func=get_predictions))
+            print(tangram_game(image=args.mode, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
         elif args.mode.endswith((".mp4", ".mov")): 
             # live testing
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
-            tangram_game(video=args.mode, side=args.side, prepro=preprocess_img_2, pred_func=get_predictions)
+            tangram_game(video=args.mode, side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
         elif args.mode == "test":
             path = "data/test_images/bateau_8_right.jpg"
             img_cv = cv2.imread(path)
-            print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions))
+            print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
         elif args.mode.isnumeric() and (int(args.mode) == 0 or int(args.mode) == 1): 
             # webcam
-            tangram_game(video=int(args.mode), side=args.side, prepro=preprocess_img_2, pred_func=get_predictions)
+            tangram_game(video=int(args.mode), side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
         else :
             raise Exception("the mode isn't valid - pass a valid image/video path or a webcam stream")
     
