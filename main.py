@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     # paths available for testing
     path_vid = "data/videos/coeur.mov"
-    path_img = "data/test_images/bateau_4_right.jpg"
+    path_img = "data/test_images/cygne_20_left.jpg"
 
     # cli options
     parser = argparse.ArgumentParser(description="Tangram detection\n")
@@ -39,7 +39,7 @@ if __name__ == '__main__':
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
             tangram_game(video=args.mode, side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
         elif args.mode == "test":
-            path = "data/test_images/cygne_20_left.jpg"
+            path = "data/test_images/cygne_28_left.jpg"
             img_cv = cv2.imread(path)
             print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
         elif args.mode.isnumeric() and (int(args.mode) == 0 or int(args.mode) == 1): 
