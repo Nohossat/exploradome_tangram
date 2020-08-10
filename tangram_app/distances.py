@@ -80,8 +80,8 @@ def merge_tangram(image, contours):
 
 def distance_formes(contours):
     formes = {"triangle": [], "squart": [], "parallelo": []}
-
     for cnt in contours:
+        
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
         if len(approx) == 3:
@@ -91,12 +91,13 @@ def distance_formes(contours):
             (x, y, w, h) = cv2.boundingRect(approx)
 
             ratio = w / float(h)
-
             if ratio >= 0.9 and ratio <= 1.1:
                 formes["squart"].append(cnt)
 
             elif (ratio >= 0.3 and ratio <= 3.3):
                 formes["parallelo"].append(cnt)
+
+    formes = delete_isolate_formes(formes,30)
 
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
@@ -120,10 +121,11 @@ def distance_formes(contours):
                     perimeters['smallTriangle'].append(triangle_perimeter)
                 elif rapport < 1.15:
                     centers['middleTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['middleTriangle'].append(triangle_perimeter)
                 else:
                     centers['bigTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['bigTriangle'].append(triangle_perimeter)
+
 
         # Comparer la taille des triangle à parallélograme unique
         elif len(formes["parallelo"]) == 1:
@@ -143,15 +145,14 @@ def distance_formes(contours):
                     perimeters['smallTriangle'].append(triangle_perimeter)
                 elif rapport < 1.5:
                     centers['middleTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['middleTriangle'].append(triangle_perimeter)
                 else:
                     centers['bigTriangle'].append(triangle_center)
-                    perimeters['smallTriangle'].append(triangle_perimeter)
+                    perimeters['bigTriangle'].append(triangle_perimeter)
 
         else:
 
-            triangleArea = [cv2.contourArea(triangle)
-                            for triangle in formes['triangle']]
+            triangleArea = [cv2.contourArea(triangle)  for triangle in formes['triangle']]
             min_triangle_area = min(triangleArea)
 
             max_triangle_area = max(triangleArea)
@@ -170,10 +171,10 @@ def distance_formes(contours):
                         perimeters['smallTriangle'].append(triangle_perimeter)
                     elif max_triangle_area / cv2.contourArea(triangle) > 2:
                         centers['middleTriangle'].append(triangle_center)
-                        perimeters['smallTriangle'].append(triangle_perimeter)
+                        perimeters['middleTriangle'].append(triangle_perimeter)
                     else:
                         centers['bigTriangle'].append(triangle_center)
-                        perimeters['smallTriangle'].append(triangle_perimeter)
+                        perimeters['bigTriangle'].append(triangle_perimeter)
 
         for squart in formes['squart']:
             squart_perimeter = cv2.arcLength(squart, True)
@@ -194,15 +195,72 @@ def distance_formes(contours):
     for key, value in centers.items():
         if len(value)> 1 :
             for i in range(len(value)-1):
-                x1,y1 = value[i]
-                x2,y2 = value[i+1]
+                #x1,y1 = value[i]
+                #x2,y2 = value[i+1]
                 distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
                 if distance < 2:
                     centers[key].remove(centers[key][i+1])
-                    perimeters[key].remove(perimeters[key][i + 1])
-                    break
+                    perimeters[key].remove(perimeters[key][i+1])
+        else:
+            perimeters[key] = []        
 
     return centers, perimeters
+
+def delete_isolate_formes2(formes, threshold=10):
+    forme_to_delete = {}
+    forme_centers = {}  
+    for keys1, values1 in formes.items():
+        forme_centers[keys1] = []
+        for i  in range(len(values1)):
+            M1 = cv2.moments(values1[i])
+            center_i_x, center_i_y = [int(M1["m10"] / M1["m00"]),int(M1["m01"] / M1["m00"])]
+            for keys2, values2 in formes.items():
+                for j  in range(len(values2)):
+                    if keys1 != keys2 and i != j:
+                        M2 = cv2.moments(values2[j])
+                        center_j_x, center_j_y = [int(M2["m10"] / M2["m00"]),int(M2["m01"] / M2["m00"])]
+                        distance1 = np.array([math.sqrt(pow(point1[0]+center_i_x,2)+pow(point1[1]-center_i_y,2)) for point1 in formes[keys1][i].reshape(-1,2)])
+                        distance2 = np.array([math.sqrt(pow(point2[0]+center_j_x,2)+pow(point2[1]-center_j_y,2)) for point2 in formes[keys2][j].reshape(-1,2)])
+                        lessdist_cnt2 = formes[keys1][i].reshape(-1,2)[np.argmin(distance1)] 
+                        lessdist_cnt1 = formes[keys2][j].reshape(-1,2)[np.argmin(distance2)]     
+            distance = math.sqrt(pow(lessdist_cnt2[0]-lessdist_cnt1[0],2)+pow(lessdist_cnt2[1]-lessdist_cnt1[1],2))
+            forme_centers[keys1].append(distance)
+    print(forme_centers)
+
+def delete_isolate_formes(formes, threshold=4):
+    mindistances = {}
+    for keys1, formes1 in formes.items():
+        mindistances[keys1] = []
+        for i in range(len(formes1)):
+            distances = []
+            for keys2, formes2 in formes.items():
+                for j in range(len(formes2)):
+                    if keys1 != keys2 and i != j:
+                        cnt1 = formes1[i]
+                        cnt2 = formes2[j]
+                        distance = minDistance(cnt1,cnt2)
+                        distances.append(distance)
+            if len(distances)>0:  
+                mindistances[keys1].append(min(distances)) 
+    forme_output = {}
+    for keys, values in mindistances.items():
+        forme_output[keys] = []
+        for i in range(len(values)):
+            if mindistances[keys][i] < threshold:
+                forme_output[keys].append(formes[keys][i])
+    return forme_output              
+    
+def minDistance(contour, contourOther):
+
+    distanceMin = 99999999
+    for point1 in contour:
+        for point2 in contourOther:
+            for xA, yA in point1:
+                for xB, yB in point2:
+                    distance = ((xB-xA)**2+(yB-yA)**2)**(1/2) # distance formula
+                    if (distance < distanceMin and distance > 0 ):
+                        distanceMin = distance
+    return distanceMin 
 
 def ratio_distance(centers, perimeters):
     distances = {}

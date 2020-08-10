@@ -1,6 +1,6 @@
 import re
 import os
-from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 from .tangram_game import tangram_game
