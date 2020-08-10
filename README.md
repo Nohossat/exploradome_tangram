@@ -79,6 +79,10 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 - Compare this distance scorecard to the distance scorecard of each of the 12 target outlines (using an RMSE distance metric over the 21 distance readings)
 - Transform RMSE into a probability distribution.
 
+### Pre-processing
+
+![Image 1](/Users/macbook/Downloads/canny_edge.JPG)
+
 ## Classification results
 
 Frames per seconds : 333 fps
