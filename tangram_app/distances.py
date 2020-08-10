@@ -40,9 +40,16 @@ def dist_humoment4(hu1,hu2):
     distance = np.linalg.norm(hu1-hu2)
     return distance
 
-
 # see what functions we really use in the following ones @Gautier
 def detect_forme(cnts, image):
+    '''
+    This function detects all triangle squart and quadilater shape in the image
+    author: @Gautier
+    ================================
+    Parameter:
+     @cnts: contours that previous function returns
+     @image: image that we have preprocessed
+    '''
     cnts_output = []
 
     for cnt in cnts:
@@ -53,24 +60,31 @@ def detect_forme(cnts, image):
         img_area = image.shape[0] * image.shape[1]
         # print("image area", img_area)
         if area / img_area > 0.0001:
-            # for triangle
+             # for triangle, if the shape has 3 angles
             if len(approx) == 3:
                 cnts_output.append(cnt)
-            # for quadrilater
+                
+            # for quadrilater, if the shape has 4 angles
             elif len(approx) == 4:
                 (x, y, w, h) = cv2.boundingRect(approx)
 
                 ratio = w / float(h)
-                # if ratio >= 0.95 and ratio <= 1.05:
-                # cnts_output.append(cnt)
-
-                # elif(ratio >= 0.3 and ratio < 0.95) or (ratio > 1.05 and ratio <= 3):
+                # if the ratio is correct, we take this shape as a quadrilateral
                 if (ratio >= 0.33 and ratio <= 3):
                     cnts_output.append(cnt)
 
     return cnts_output
 
 def merge_tangram(image, contours):
+    '''
+    This functions puts all shapes in a black background image, it deletes all others shapes
+    author: @Gautier
+    ================================
+    Parameter:
+     @image: the original image
+     @contours: all contours that returns last function
+    '''
+    
     # Create a new black image
     out_image = np.zeros(image.shape, image.dtype)
 
@@ -79,33 +93,51 @@ def merge_tangram(image, contours):
     return out_image, contours
 
 def distance_formes(contours):
+    '''
+    In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
+    In the second step it calculates all distance between 2 shapes
+    author: @Gautier
+    ==============================
+    Parameter:
+     @contours: the cv2.contours that returns last function
+    '''
+    
     formes = {"triangle": [], "squart": [], "parallelo": []}
     for cnt in contours:
         
         perimetre = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
+        # if the shape has 3 angles we consider this shape is a triangle
         if len(approx) == 3:
             formes["triangle"].append(cnt)
-
+        # if the shape has 4 angles we consider this shape is a quadrilateral
         elif len(approx) == 4:
             (x, y, w, h) = cv2.boundingRect(approx)
 
             ratio = w / float(h)
+            
+             # if the quadrilateral has this ratio between height and width, we consider this is a square
             if ratio >= 0.9 and ratio <= 1.1:
                 formes["squart"].append(cnt)
 
+            # if the quadrilateral has this ratio between height and width, we consider this is a parallelogram
             elif (ratio >= 0.3 and ratio <= 3.3):
                 formes["parallelo"].append(cnt)
+                
+    # Remove isolated shapes
+    formes = delete_isolate_formes3(formes,200)
 
-    formes = delete_isolate_formes(formes,30)
-
+    # dictionnay to take barycenters of all shapes
     centers = {"smallTriangle": [], "middleTriangle": [],
                "bigTriangle": [], "squart": [], "parallelo": []}
+    
+    # dictionnay to take perimeters of all shapes
     perimeters = {"smallTriangle": [], "middleTriangle": [],
                   "bigTriangle": [], "squart": [], "parallelo": []}
 
-    # Comparer la taille des triangle à parallélograme unique
+
     if len(formes['triangle']) > 0:
+         # we detecte the size of trianlge, we compare the area of triangle to the unique square's, if we detect we have just one parallelogram
         if len(formes["squart"]) == 1:
             areaSquart = cv2.contourArea(formes["squart"][0])
             for triangle in formes['triangle']:
@@ -151,7 +183,7 @@ def distance_formes(contours):
                     perimeters['bigTriangle'].append(triangle_perimeter)
 
         else:
-
+            # else we compare between the bigger triangle and the smaller triangle
             triangleArea = [cv2.contourArea(triangle)  for triangle in formes['triangle']]
             min_triangle_area = min(triangleArea)
 
@@ -175,7 +207,8 @@ def distance_formes(contours):
                     else:
                         centers['bigTriangle'].append(triangle_center)
                         perimeters['bigTriangle'].append(triangle_perimeter)
-
+                        
+        # for case of square
         for squart in formes['squart']:
             squart_perimeter = cv2.arcLength(squart, True)
             M = cv2.moments(squart)
@@ -184,6 +217,7 @@ def distance_formes(contours):
             centers['squart'].append(squart_center)
             perimeters['squart'].append(squart_perimeter)
 
+        # for case of parallelogram
         for parallelo in formes['parallelo']:
             parallelo_perimeter = cv2.arcLength(parallelo, True)
             M = cv2.moments(parallelo)
@@ -192,42 +226,25 @@ def distance_formes(contours):
             centers['parallelo'].append(parallelo_center)
             perimeters['parallelo'].append(parallelo_perimeter)
 
+    # Remove duplicate shapes
+
     for key, value in centers.items():
         if len(value)> 1 :
             for i in range(len(value)-1):
-                #x1,y1 = value[i]
-                #x2,y2 = value[i+1]
+
                 distance = np.linalg.norm(np.array(value[i])-np.array(value[i+1]))
                 if distance < 2:
                     centers[key].remove(centers[key][i+1])
                     perimeters[key].remove(perimeters[key][i+1])
         else:
             perimeters[key] = []        
+    print(centers)
+    
 
+    
     return centers, perimeters
 
-def delete_isolate_formes2(formes, threshold=10):
-    forme_to_delete = {}
-    forme_centers = {}  
-    for keys1, values1 in formes.items():
-        forme_centers[keys1] = []
-        for i  in range(len(values1)):
-            M1 = cv2.moments(values1[i])
-            center_i_x, center_i_y = [int(M1["m10"] / M1["m00"]),int(M1["m01"] / M1["m00"])]
-            for keys2, values2 in formes.items():
-                for j  in range(len(values2)):
-                    if keys1 != keys2 and i != j:
-                        M2 = cv2.moments(values2[j])
-                        center_j_x, center_j_y = [int(M2["m10"] / M2["m00"]),int(M2["m01"] / M2["m00"])]
-                        distance1 = np.array([math.sqrt(pow(point1[0]+center_i_x,2)+pow(point1[1]-center_i_y,2)) for point1 in formes[keys1][i].reshape(-1,2)])
-                        distance2 = np.array([math.sqrt(pow(point2[0]+center_j_x,2)+pow(point2[1]-center_j_y,2)) for point2 in formes[keys2][j].reshape(-1,2)])
-                        lessdist_cnt2 = formes[keys1][i].reshape(-1,2)[np.argmin(distance1)] 
-                        lessdist_cnt1 = formes[keys2][j].reshape(-1,2)[np.argmin(distance2)]     
-            distance = math.sqrt(pow(lessdist_cnt2[0]-lessdist_cnt1[0],2)+pow(lessdist_cnt2[1]-lessdist_cnt1[1],2))
-            forme_centers[keys1].append(distance)
-    print(forme_centers)
-
-def delete_isolate_formes(formes, threshold=4):
+def delete_isolate_formes(formes, threshold=10):
     mindistances = {}
     for keys1, formes1 in formes.items():
         mindistances[keys1] = []
@@ -248,7 +265,54 @@ def delete_isolate_formes(formes, threshold=4):
         for i in range(len(values)):
             if mindistances[keys][i] < threshold:
                 forme_output[keys].append(formes[keys][i])
-    return forme_output              
+    return forme_output  
+
+def delete_isolate_formes2(formes, threshold=10):
+    forme_to_delete = {}
+    forme_centers = {}  
+    for keys1, values1 in formes.items():
+        forme_centers[keys1] = []
+        for i  in range(len(values1)):
+            M1 = cv2.moments(values1[i])
+            center_i_x, center_i_y = [int(M1["m10"] / M1["m00"]),int(M1["m01"] / M1["m00"])]
+            for keys2, values2 in formes.items():
+                for j  in range(len(values2)):
+                    if keys1 != keys2 and i != j:
+                        M2 = cv2.moments(values2[j])
+                        center_j_x, center_j_y = [int(M2["m10"] / M2["m00"]),int(M2["m01"] / M2["m00"])]
+                        distance1 = np.array([math.sqrt(pow(point1[0]+center_i_x,2)+pow(point1[1]-center_i_y,2)) for point1 in formes[keys1][i].reshape(-1,2)])
+                        distance2 = np.array([math.sqrt(pow(point2[0]+center_j_x,2)+pow(point2[1]-center_j_y,2)) for point2 in formes[keys2][j].reshape(-1,2)])
+                        lessdist_cnt2 = formes[keys1][i].reshape(-1,2)[np.argmin(distance1)] 
+                        lessdist_cnt1 = formes[keys2][j].reshape(-1,2)[np.argmin(distance2)]     
+            distance = math.sqrt(pow(lessdist_cnt2[0]-lessdist_cnt1[0],2)+pow(lessdist_cnt2[1]-lessdist_cnt1[1],2))
+            forme_centers[keys1].append(distance)
+    print(forme_centers)        
+
+def delete_isolate_formes3(formes, threshold=10):
+    mindistances = {}
+    for keys1, values1 in formes.items():
+        mindistances[keys1] = []
+        for i in range(len(values1)):
+            M1 = cv2.moments(values1[i])
+            center_i_x, center_i_y = int(M1["m10"] / M1["m00"]),int(M1["m01"] / M1["m00"])
+            min_distance = 99999999
+            for keys2, values2 in formes.items():
+                for j in range(len(values2)):
+                    if keys1 != keys2 and i != j:
+                        M2 = cv2.moments(values2[j])
+                        center_j_x, center_j_y = int(M2["m10"] / M2["m00"]),int(M2["m01"] / M2["m00"])
+                        distance = math.sqrt(pow(center_i_x-center_j_x,2)+pow(center_i_y-center_j_y,2))
+                        if distance < min_distance:
+                            min_distance = distance
+            mindistances[keys1].append(min_distance)
+    forme_output = {}
+    for keys, values in mindistances.items():
+        forme_output[keys] = []
+        for i in range(len(values)):
+            if mindistances[keys][i] < threshold:
+                forme_output[keys].append(formes[keys][i])
+
+    return forme_output        
     
 def minDistance(contour, contourOther):
 
@@ -263,6 +327,13 @@ def minDistance(contour, contourOther):
     return distanceMin 
 
 def ratio_distance(centers, perimeters):
+    '''
+    This function calculate all ratios of distances between shapes with a shape's side  
+    ==================================================
+    Parameters
+     @centers: an array of centers,  a center point is a tuple of 2 numbers: abscissa, ordinate, and a 
+     @perimeters: a dictionnay of perimeters, it has keys of all shape's name
+    '''
     distances = {}
 
     for forme1, centers1 in centers.items():
@@ -320,6 +391,7 @@ def ratio_distance(centers, perimeters):
     return distances
 
 def sorted_distances(distances):
+    
     data_distances = {"smallTriangle-smallTriangle": [], "smallTriangle-middleTriangle": [],
                       "smallTriangle-bigTriangle": [], "smallTriangle-squart": [], "smallTriangle-parallelo": [],
                       "middleTriangle-bigTriangle": [], "middleTriangle-squart": [], "middleTriangle-parallelo": [],
@@ -362,6 +434,13 @@ def sorted_distances(distances):
     return data_sortered
 
 def create_all_types_distances(link):
+    '''
+    Create to a csv file of all distances of shapes of all ours classes 
+    author: @Gautier
+    ==========================
+    parameter:
+        link: directory to save the csv file
+    '''
     images = ['bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.JPG', 'marteau.jpg',
               'montagne.jpg', 'pont.jpg', 'renard.JPG', 'tortue.jpg']
     data = pd.DataFrame(
@@ -383,6 +462,14 @@ def create_all_types_distances(link):
     data.to_csv(link, sep=";")
 
 def mse_distances(data, sorted_dists):
+    '''
+    This function returns a list of rmse that we have between our tangram with all classes 
+    author: @Gautier
+    ============================================
+    Parmeters:
+     @data: the dataframe containing all distances of shapes of all classes
+     @sorted_dists: the dictionnay containing our tangram's shape distances
+    '''
     mses = []
     for i in range(data.shape[0]):
         ligne = data.iloc[i]

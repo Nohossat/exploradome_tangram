@@ -2,7 +2,17 @@ from .processing import *
 from .distances import *
 from .moments import *
 
-def img_to_sorted_dists(img_cv, side, prepro):
+def get_predictions_with_distances(img_cv, side, prepro):
+    '''
+    This function take in input a image and return a dictionnay of shape distances
+    author: @Gautier, @Nohossat
+    ================================
+    Parameters:
+     @img_cv: input image
+     @side: it take the position of the table, if side is left we take just the left side of table, right we take the right side
+     @prepro: function of preprocessing
+    '''
+    
     cnts, cropped_img = prepro(img_cv, side=side)
     image, contours = merge_tangram(cropped_img, cnts)
 

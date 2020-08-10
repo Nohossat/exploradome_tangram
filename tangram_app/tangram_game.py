@@ -141,4 +141,4 @@ if __name__ == "__main__":
     path1 = "data/test_images/bateau_1_right.jpg"
     img_cv = cv2.imread(path1)
 
-    print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=img_to_sorted_dists))
+    print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
