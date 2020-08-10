@@ -41,7 +41,7 @@ if __name__ == '__main__':
         elif args.mode == "test":
             path = "data/test_images/bateau_8_right.jpg"
             img_cv = cv2.imread(path)
-            print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
+            print(tangram_game(side="right", image=path, prepro=preprocess_img, pred_func=get_predictions))
         elif args.mode.isnumeric() and (int(args.mode) == 0 or int(args.mode) == 1): 
             # webcam
             tangram_game(video=int(args.mode), side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)

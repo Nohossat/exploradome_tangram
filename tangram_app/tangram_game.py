@@ -47,11 +47,14 @@ def tangram_game(side=None, video=0, image=False, prepro=preprocess_img, pred_fu
 
         # pass side and image to get predictions function
         img_cv = cv2.imread(image)
-        predictions = pred_func(img_cv, side = side, prepro=prepro)
-        
+        predictions, cnts = pred_func(img_cv, side = side, prepro=prepro)
         
         # display image
-        img_cv = imutils.resize(img_cv, width=1200)
+        # img_cv = imutils.resize(img_cv, width=1200)
+
+        for c in cnts:
+            cv2.drawContours(img_cv, [c], -1, (50, 255, 50), 1)
+
         cv2.imshow("Predictions", img_cv)
         cv2.moveWindow("Predictions", 30, 30)
         cv2.waitKey(0)

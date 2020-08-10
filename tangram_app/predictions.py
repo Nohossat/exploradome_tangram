@@ -89,5 +89,5 @@ def get_predictions(image, prepro, side, hu_moments_dataset="data/hu_moments.csv
     probas = dist_labelled.sort_values(by=["proba"], ascending=False)[['target','proba']].reset_index(drop=True)
     
     # sorted probabilities
-    return probas
+    return probas, cnts
 
