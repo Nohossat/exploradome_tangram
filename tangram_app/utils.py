@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import re
 import cv2
+import numpy as np
 
 DATA_PATH = 'data/'
 
@@ -54,7 +55,7 @@ def get_nb_corners(img):
         # cv2.waitKey(0)
         # cv2.destroyAllWindows
         
-    return len(corners), corners
+    return len(corners)
 """
 Results nb of corners
 bol = 12
