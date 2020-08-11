@@ -21,6 +21,18 @@ def test_preprocess_img():
     result = preprocess_img(img_cv, side=side)
     assert isinstance(result, list)
 
+def test_preprocess_img_2():
+    pass
+
+def test_extract_triangles_squares():   
+    pass
+
+def test_blur()
+    pass
+
+def test_get_contours():
+    pass
+
 #test cv image and resizes it. 
 def test_resize():
     img = 'data/tangrams/bateau_4_right.jpg'
@@ -32,3 +44,20 @@ def test_resize():
     image_resize = resize(img_cv, side=side)
     assert image_resize.shape[0:2] == (494, 360), 'image is too big'
  
+def test_display_contour():
+    pass
+
+def test_extract_triangles_squares_2():    
+    pass
+
+def test_crop():
+    pass
+
+def test_contour_intersect():
+    pass
+
+def test_detect_black_color():
+    pass
+
+def test_detect_white_color():
+    pass

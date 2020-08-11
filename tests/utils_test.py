@@ -3,7 +3,17 @@
 """
 
 import pytest
-from tangram_app.find_corner import *
+import cv2
+import numpy as np
+import imutils
+import pandas as pd
+import os
+import re
+
+from tangram_app.utils import *
+
+def test_get_files():
+    assert len(get_files(directory='data/tangrams')) == 12, 'Images must be 12'
 
 #test visualize on an image the corner point in red
 def test_get_nb_corners():
