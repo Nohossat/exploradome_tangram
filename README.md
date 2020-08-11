@@ -106,6 +106,9 @@ Frames per seconds : 20 fps
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
+![Confusion matrix clean dataset](./tests/confusion_matrix_clean_dataset.png)
+
+![Classification metrics clean dataset](./tests/metrics_clean_test.png)
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
