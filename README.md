@@ -128,15 +128,15 @@ Our data collection was hence designed to obtain a test set of images that would
 
 #### Attempts and challenges
 
-- A key issue has been the robustness of the preprocessing pipeline. Originally, the test dataset was too narrow to properly capture variations in light conditions.   
+* A key issue has been the robustness of the preprocessing pipeline. Originally, the test dataset was too narrow to properly capture variations in light conditions.   
 In early attempts, our preprocessing (clear isolation of the tangrams on the board), worked well for similar conditions with a subset of images similar to those used for calibration; however, it did not generalize well with other environments (different table orientation, light, shadows...).
 To that end, changing the preprocessing pipeline (from a binary threshold to canny edge detection) yielded much more robust results.
 
-- Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. Hu Moments are a set of 7 non-human-interpretable features which can be used to characterize any shape. Their list can be found [here](https://en.wikipedia.org/wiki/Image_moment#Moment_invariants).
+* Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. Hu Moments are a set of 7 non-human-interpretable features which can be used to characterize any shape. Their list can be found [here](https://en.wikipedia.org/wiki/Image_moment#Moment_invariants).
 
- However, this approach turned out to give poor predictions for shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
+   However, this approach turned out to give poor predictions for shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
 
- The results from this approach highlight how the Hu Moments approach results in near-perfect predictions in ideal conditions but does not generalize well as the absence or presence of a single geometrice form completely changes their values and hence the program's ability to match it with the appropriate target class.
+   The results from this approach highlight how the Hu Moments approach results in near-perfect predictions in ideal conditions but does not generalize well as the absence or presence of a single geometrice form completely changes their values and hence the program's ability to match it with the appropriate target class.
 
 <p align="center"> Clean dataset results with the Hu Moments approach </p>
 <p align="center"><img width=60% src="./tests/hu_moments_metrics_clean_dataset.png")</p>
