@@ -71,15 +71,15 @@ python3 main.py --mode /videos/coeur.jpg --side right
 
 ## Approach & Objective
 
-Our approach has been to avoid the use of ML and DL techniques and leverage OpenCV's native capabilities to detect the individual shapes on the board and estimate their likeness to each of the twelve classes, using Hu Moments.
+Our approach has been to avoid the use of ML and DL techniques and leverage OpenCV's native capabilities to detect the individual shapes on the board and estimate their likeness to each of the twelve classes, using distances between the shapes' centroids.
 
 ## Image processing steps
 
 - Split the video feed into two halves (left and right side)
 - Identify all the edges on the board
 - Keep only the contours corresponding to regular geometric shapes (triangle, square, parallelogram).
-- Compute centroids of each geometric piece.
-- Calculate distances between each pair of pieces (resulting in 21 data points if all pieces are on the board).
+- Compute centroids of each geometric shape.
+- Calculate distances between each pair of geometric shapes (resulting in 21 data points if all pieces are on the board).
 - Compare this distance scorecard to the distance scorecard of each of the 12 target outlines (using an RMSE distance metric over the 21 distance readings)
 - Transform RMSE into a probability distribution.
 
@@ -93,30 +93,30 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
  
 <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/canny_edge.JPG"></p>
 
-3) Find the form 
+3) Find geometric shapes 
  
  <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
 
 
 ## Classification results
 
-Frames per seconds : 20 fps
+Frames per seconds : 40-50 fps
 
 
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
-![Confusion matrix clean dataset](./tests/confusion_matrix_clean_dataset.png)
+<p align="center"><img width=60% src="./tests/confusion_matrix_clean_dataset.png")</p>
 
-![Classification metrics clean dataset](./tests/metrics_clean_test.png)
+<p align="center"><img width=60% src="./tests/metrics_clean_test.png")</p>
+
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
 
-![Confusion matrix](./tests/confusion_matrix.png)
+<p align="center"><img width=60% src="./tests/confusion_matrix.png")</p>
 
-![Classification metrics](./tests/classification_metrics.png)
-
+<p align="center"><img width=60% src="./tests/classification_metrics.png")</p>
 
 ## Project metainformation
 
@@ -128,11 +128,25 @@ Our data collection was hence designed to obtain a test set of images that would
 
 #### Attempts and challenges
 
-- A key issue has been the robustness of the preprocessing pipeline. Originally, the test dataset was too narrow to properly capture variations in light conditions.   
-In early attempts, our preprocessing (clear isolation of the tangrams on the board), worked well for similar conditions with a subset of images similar to those used for calibration; however, it did not generalize well with other environments (different table orientation, light, shadows...). 
-To that goal, changing the preprocessing pipeline (from a binary threshold to canny edge detection) yielded much more robust results.
+* A key issue has been the robustness of the preprocessing pipeline. Originally, the test dataset was too narrow to properly capture variations in light conditions.   
+In early attempts, our preprocessing (clear isolation of the tangrams on the board), worked well for similar conditions with a subset of images similar to those used for calibration; however, it did not generalize well with other environments (different table orientation, light, shadows...).
+To that end, changing the preprocessing pipeline (from a binary threshold to canny edge detection) yielded much more robust results.
 
-- Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. However, this approach turned out to give poor predictions for incomplete shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
+* Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. Hu Moments are a set of 7 non-human-interpretable features which can be used to characterize any shape. Their list can be found [here](https://en.wikipedia.org/wiki/Image_moment#Moment_invariants).
+
+   However, this approach turned out to give poor predictions for shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
+
+   The results from this approach highlight how the Hu Moments approach results in near-perfect predictions in ideal conditions but does not generalize well as the absence or presence of a single geometrice form completely changes their values and hence the program's ability to match it with the appropriate target class.
+
+<p align="center"> Clean dataset results with the Hu Moments approach </p>
+<p align="center"><img width=60% src="./tests/hu_moments_metrics_clean_dataset.png")</p>
+ 
+<p align="center"> Challenging dataset results with the Hu Moments approach</p>
+<p align="center"><img width=60% src="./tests/hu_moments_mixed_dataset.png")</p>
+
+
+
+
 
 # Team
 
