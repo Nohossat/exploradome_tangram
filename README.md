@@ -32,7 +32,9 @@ Within the framework of the project, 12 tangram selected shapes act as classes f
  - Rabbit (Lapin)
  - Swan (Cygne)
  - Turtle (Tortue)
+
 <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
+
 
 ## Installation
 
@@ -48,11 +50,13 @@ pip install -r requirements.txt
 
 ## Execution
 
+
 ### With an external webcam
 ```
 # connect an external webcam and launch the script, specifying the board side of interest (in this example right)
 python3 main.py --mode 1 --side right
 ```
+
 ### With a video saved locally
 ```
 # launch the script using a video saved locally, specifying the board side of interest (in this example left)
@@ -96,14 +100,22 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
 ## Classification results
 
-Frames per seconds : 333 fps
+Frames per seconds : 20 fps
+
 
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
+![Confusion matrix clean dataset](./tests/confusion_matrix_clean_dataset.png)
+
+![Classification metrics clean dataset](./tests/metrics_clean_test.png)
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
+
+![Confusion matrix](./tests/confusion_matrix.png)
+
+![Classification metrics](./tests/classification_metrics.png)
 
 
 ## Project metainformation
@@ -123,9 +135,16 @@ To that goal, changing the preprocessing pipeline (from a binary threshold to ca
 - Our first approach was to use Hu Moments to compare the player's shape to each of the 12 classes,  while benefiting from  Hu Moments' invariance to rotation, scale and position. However, this approach turned out to give poor predictions for incomplete shapes which are in the process of construction. Another problem was an overly sensitive reaction to camera obstruction (when a player move a piece of tangram, he can obstruct the camera while doing it) which motivates our switch to more robust data points taken from piece centroids' relative distance to each other.
 
 # Team
+
 [Nohossat](https://github.com/Nohossat)  
 [Bastien](https://github.com/BasCR-hub)  
 [Nicolas](https://github.com/nicolaszys)  
 [Renata](https://github.com/renatakaczor)  
+<<<<<<< HEAD
 [Gautier](https://github.com/yanggautier)  
+=======
+[Gauthier](https://github.com/yanggautier)  
+[Contribution guidelines for this project](https://github.com/Nohossat)
+
+>>>>>>> 9ad939f7eef29d3d08dca64da952e4a5e484bd1b
 

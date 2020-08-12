@@ -41,19 +41,6 @@ def detect_forme(cnts, image):
 
     return cnts_output
 
-# def get_area_ratio(contour_shape,formes):
-#     area_norm = 0.01
-#     if len(formes["squart"]) == 1:
-#         area_norm = cv2.contourArea(formes["squart"][0])
-#     elif len(formes["parallelo"]) == 1:
-#         area_norm = cv2.contourArea(formes["paralello"][0])
-#     else: 
-#         min_triangle_area = min(triangleArea)
-#         max_triangle_area = max(triangleArea)
-
-#     areaTriangle = cv2.contourArea(triangle)
-#     return area_ratio
-
 
 def distance_formes(contours):
     '''
