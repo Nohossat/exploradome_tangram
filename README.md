@@ -1,4 +1,4 @@
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/logo.jpg"></p>
+<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/logo.jpg"></p>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
@@ -33,7 +33,7 @@ Within the framework of the project, 12 tangram selected shapes act as classes f
 - Swan (Cygne)
 - Turtle (Tortue)
 
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
+<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/Montages.jpg"></p>
 
 
 ## Installation
@@ -87,15 +87,15 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
  1) Our original image
 
-<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/original.JPG"></p>
+<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/original.JPG"></p>
 
  2) Detect edges
  
-<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/canny_edge.JPG"></p>
+<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/canny_edge.JPG"></p>
 
 3) Find geometric shapes 
  
- <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
+ <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/Shapes_only.JPG"></p>
 
 
 ## Classification results
@@ -106,17 +106,19 @@ Frames per seconds : 40-50 fps
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
-<p align="center"><img width=60% src="./tests/confusion_matrix_clean_dataset.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/confusion_matrix_clean_dataset.png")</p>
 
-<p align="center"><img width=60% src="./tests/metrics_clean_test.png")</p>
+
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/metrics_clean_test.png")</p>
 
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
 
-<p align="center"><img width=60% src="./tests/confusion_matrix.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/confusion_matrix.png")</p>
 
-<p align="center"><img width=60% src="./tests/classification_metrics.png")</p>
+
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/classification_metrics.png")</p>
 
 ## Project metainformation
 
@@ -139,12 +141,10 @@ To that end, changing the preprocessing pipeline (from a binary threshold to can
    The results from this approach highlight how the Hu Moments approach results in near-perfect predictions in ideal conditions but does not generalize well as the absence or presence of a single geometrice form completely changes their values and hence the program's ability to match it with the appropriate target class.
 
 <p align="center"> Clean dataset results with the Hu Moments approach </p>
-<p align="center"><img width=60% src="./tests/hu_moments_metrics_clean_dataset.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/hu_moments_metrics_clean_dataset.png")</p>
  
 <p align="center"> Challenging dataset results with the Hu Moments approach</p>
-<p align="center"><img width=60% src="./tests/hu_moments_mixed_dataset.png")</p>
-
-
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/hu_moments_mixed_dataset.png")</p>
 
 
 

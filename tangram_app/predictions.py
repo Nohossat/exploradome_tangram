@@ -24,7 +24,7 @@ def get_predictions_with_distances(img_cv, side, prepro):
     sorted_dists = sorted_distances(distances)
 
     # get distances
-    data = pd.read_csv("data/data.csv", sep=";")
+    data = pd.read_csv("data/tangram_properties/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
     
 
@@ -45,7 +45,7 @@ def get_predictions_with_distances(img_cv, side, prepro):
     # returns sorted probas
     return probas_labelled
 
-def get_predictions(image, prepro, side, hu_moments_dataset="data/hu_moments.csv"):
+def get_predictions(image, prepro, side, hu_moments_dataset="data/tangram_properties/hu_moments.csv"):
     """
     compare moments of a frame with the hu moments of our dataset images  
 

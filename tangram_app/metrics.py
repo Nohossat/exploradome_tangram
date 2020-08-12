@@ -9,7 +9,7 @@ from .processing import *
 from .predictions import *
 from sklearn.metrics import classification_report, confusion_matrix
 
-# test statiques
+
 def get_classification_report_pics(dataset_path=None, game=tangram_game, prepro=preprocess_img_2, pred_func=get_predictions_with_distances):
     """
     from a set of images, get global accuracy, precision, recall

@@ -50,19 +50,6 @@ def detect_forme(cnts, image):
 
     return cnts_output
 
-def get_area_ratio(contour_shape,formes):
-    area_norm = 0.01
-    if len(formes["squart"]) == 1:
-        area_norm = cv2.contourArea(formes["squart"][0])
-    elif len(formes["parallelo"]) == 1:
-        area_norm = cv2.contourArea(formes["paralello"][0])
-    else: 
-        min_triangle_area = min(triangleArea)
-        max_triangle_area = max(triangleArea)
-
-    areaTriangle = cv2.contourArea(triangle)
-    return area_ratio
-
 def distance_formes(contours):
     '''
     In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
@@ -250,7 +237,6 @@ def delete_isolate_formes3(formes, threshold=10):
     return forme_output        
     
 def minDistance(contour, contourOther):
-
     distanceMin = 99999999
     for point1 in contour:
         for point2 in contourOther:
@@ -326,7 +312,6 @@ def ratio_distance(centers, perimeters):
     return distances
 
 def sorted_distances(distances):
-    
     data_distances = {"smallTriangle-smallTriangle": [], "smallTriangle-middleTriangle": [],
                       "smallTriangle-bigTriangle": [], "smallTriangle-squart": [], "smallTriangle-parallelo": [],
                       "middleTriangle-bigTriangle": [], "middleTriangle-squart": [], "middleTriangle-parallelo": [],
