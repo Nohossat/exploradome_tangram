@@ -236,7 +236,7 @@ def delete_isolate_formes3(formes, threshold=10):
 
     return forme_output        
     
-def minDistance(contour, contourOther):
+# def minDistance(contour, contourOther):
     distanceMin = 99999999
     for point1 in contour:
         for point2 in contourOther:

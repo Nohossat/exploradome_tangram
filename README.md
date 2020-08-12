@@ -1,6 +1,6 @@
 <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/logo.jpg"></p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 ![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -155,6 +155,5 @@ To that end, changing the preprocessing pipeline (from a binary threshold to can
 [Nicolas](https://github.com/nicolaszys)  
 [Renata](https://github.com/renatakaczor)  
 [Gauthier](https://github.com/yanggautier)  
-[Contribution guidelines for this project](https://github.com/Nohossat)
 
 

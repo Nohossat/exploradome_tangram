@@ -16,11 +16,14 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
     '''
 
     img = crop(img, side=side)
-    image_blurred = blur(img,3)
+    image_blurred = blur(img,1)
     cnts = get_contours(image_blurred)
     image_triangles_squares = extract_triangles_squares(cnts, img)
     blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
+
+    display_contour(final_cnts, img)
+
     return final_cnts, img
 
 def preprocess_img_2(origin_img, side):
@@ -74,30 +77,6 @@ def get_contours(image):
     cnts = imutils.grab_contours(cnts)
     return cnts
 
-def resize(img, side, percent=50):
-    '''
-    this function takes a cv image as input and resizes it. 
-    The primary objective is to make the contouring less sensitive to between-tangram demarcation lines,
-    the secondary objective is to speed up processing.
-    =========
-    Parameters : 
-    img : OpenCV image  
-    percent : the percentage of the scaling  
-    author : @BasCR-hub  
-    '''
-    scale_percent = percent  # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA).copy()
-
-    if side:
-        if side == 'right':
-            img = img[:-50, 470:-130]
-        elif side == 'left':
-            img = img[:-70, 50:470]
-    return img
-
 def display_contour(cnts, img):
     """
     display the contour of the image
@@ -139,10 +118,7 @@ def extract_triangles_squares_2(cnts, img):
                     cnts_output.append(cnt)
                     cv2.drawContours(img, [cnt], -1, (50, 255, 50), 3)
                     cv2.fillPoly(img, pts=[cnt], color=(50, 255, 50))
-
-    # cv2.imshow('img',img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    
     return cnts_output, out_image
 
 def crop(img, side="left"):

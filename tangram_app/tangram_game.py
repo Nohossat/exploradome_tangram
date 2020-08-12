@@ -93,10 +93,6 @@ def display_predictions(predictions, image, onscreen=True):
             prediction_label = predictions.loc[0, 'target']
             prediction_proba = predictions.loc[0, 'proba']
 
-            # if cnts : 
-                # for c in cnts:
-                    # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-
         msg = f"Main proba : {prediction_label}"
 
         if predictions is not None:
@@ -137,10 +133,3 @@ def display_img(img):
     cv2.moveWindow("Predictions", 30, 30)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    path = "data/test_images/cygne_20_left.jpg"
-    path1 = "data/test_images/bateau_1_right.jpg"
-    img_cv = cv2.imread(path1)
-
-    print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
