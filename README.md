@@ -2,14 +2,13 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
-[![Build Status](https://travis-ci.org/anfederico/Clairvoyant.svg?branch=master)](https://travis-ci.org/anfederico/Clairvoyant)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 # TangrIAm Project
 #### Real-time tangram form detection from a live video stream.
 
-The project is partnership between Exploradôme museum, OCTO Technology and Microsoft and it aims to introduce the concept and application of artificial intelligence to young children. The specific application developed for the project is to apply object detection to live tangram solving.
+The project is a partnership between Exploradôme museum, OCTO Technology and Microsoft and it aims to introduce the concept and application of artificial intelligence to young children. The specific application developed for the project is to apply object detection to live tangram solving.
 
 A tangram is a dissection puzzle consisting of seven flat polygons (5 triangles, 1 square and 1 parallelogram) which are combined to obtain a specific shape. The objective is to replicate a pattern (given only an outline) using all seven pieces without overlap.
 
@@ -19,19 +18,20 @@ Tangram can be played either by multiple teams at the same time, racing to be th
 This project's objective is to detect the similarity between the shape drawn by each player at any point in time and the twelve possible target classes. 
 The predictions are to be in real-time from a live video feed of the game board.
 
-Within the framework of the project, 12 tangram selected shapes act as classes for the classifier, classes' names English (French):
- - Boat (Bateau)
- - Bow (Bol)
- - Bridge (Pont)
- - Cat (Chat)
- - Fox (Renard)
- - Hammer (Marteau)
- - Heart (Coeur)
- - House (Maison)
- - Mountain (Montagne)
- - Rabbit (Lapin)
- - Swan (Cygne)
- - Turtle (Tortue)
+Within the framework of the project, 12 tangram selected shapes act as classes for the classifier:
+
+- Boat (Bateau)
+- Bow (Bol)
+- Bridge (Pont)
+- Cat (Chat)
+- Fox (Renard)
+- Hammer (Marteau)
+- Heart (Coeur)
+- House (Maison)
+- Mountain (Montagne)
+- Rabbit (Lapin)
+- Swan (Cygne)
+- Turtle (Tortue)
 
 <p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
 
@@ -52,19 +52,19 @@ pip install -r requirements.txt
 
 
 ### With an external webcam
-```
+```shell
 # connect an external webcam and launch the script, specifying the board side of interest (in this example right)
 python3 main.py --mode 1 --side right
 ```
 
 ### With a video saved locally
-```
+```shell
 # launch the script using a video saved locally, specifying the board side of interest (in this example left)
 python3 main.py --mode /videos/coeur.pm4 --side left
 ```
 
 ### With an image
-```
+```shell
 # launch the app with an image on the right side, specifying the board side of interest (in this example right)
 python3 main.py --mode /videos/coeur.jpg --side right
 ```

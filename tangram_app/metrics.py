@@ -10,7 +10,7 @@ from .predictions import *
 from sklearn.metrics import classification_report, confusion_matrix
 
 # test statiques
-def get_classification_report_pics(dataset_path=None, game=tangram_game):
+def get_classification_report_pics(dataset_path=None, game=tangram_game, prepro=preprocess_img_2, pred_func=get_predictions_with_distances):
     """
     from a set of images, get global accuracy, precision, recall
     """
@@ -27,7 +27,7 @@ def get_classification_report_pics(dataset_path=None, game=tangram_game):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = game(image=img_path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
+        predictions = game(image=img_path, prepro=prepro, pred_func=pred_func)
         if predictions is None:
             continue
 

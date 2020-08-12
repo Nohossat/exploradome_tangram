@@ -39,9 +39,9 @@ if __name__ == '__main__':
             assert os.path.exists(args.mode), "the file doesn't exist - try with another file"
             tangram_game(video=args.mode, side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
         elif args.mode == "test":
-            path = "data/test_images/marteau_2_right.jpg"
+            path = "data/test_images/bateau_4_right.jpg"
             img_cv = cv2.imread(path)
-            print(tangram_game(side="right", image=path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances))
+            print(tangram_game(side="right", image=path, prepro=preprocess_img, pred_func=get_predictions))
         elif args.mode.isnumeric() and (int(args.mode) == 0 or int(args.mode) == 1): 
             # webcam
             tangram_game(video=int(args.mode), side=args.side, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     
     if args.metrics :
         assert os.path.exists(args.metrics), "the folder doesn't exist - try with another one"
-        report = get_classification_report_pics(dataset_path=args.metrics)
+        report = get_classification_report_pics(dataset_path=args.metrics, prepro=preprocess_img, pred_func=get_predictions)
         print(report)
         
     

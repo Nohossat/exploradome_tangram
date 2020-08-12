@@ -6,6 +6,15 @@ import imutils
 import math
 import pandas as pd
 
+# caclate distances for Hu Moments
+def dist_humoment(hu1,hu2):
+    """
+    return sum of euclidienne distance,sum of squart of pow difference
+    author: @Gautier
+    """
+    distance = np.linalg.norm(hu1-hu2)
+    return distance
+
 # see what functions we really use in the following ones @Gautier
 def detect_forme(cnts, image):
     '''
@@ -53,7 +62,6 @@ def get_area_ratio(contour_shape,formes):
 
     areaTriangle = cv2.contourArea(triangle)
     return area_ratio
-
 
 def distance_formes(contours):
     '''
@@ -214,7 +222,6 @@ def distance_formes(contours):
 
     # print(centers)
     return centers2, perimeters2
-
 
 def delete_isolate_formes3(formes, threshold=10):
     mindistances = {}
