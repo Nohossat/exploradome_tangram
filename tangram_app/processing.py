@@ -17,10 +17,10 @@ def preprocess_img(img, side=None, sensitivity_to_light=50):
 
     img = crop(img, side=side)
     image_blurred = blur(img,3)
-    final_cnts = get_contours(image_blurred)
-    # image_triangles_squares = extract_triangles_squares(cnts, img)
-    # blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
-    # final_cnts = get_contours(blurred_triangles_squared)
+    cnts = get_contours(image_blurred)
+    image_triangles_squares = extract_triangles_squares(cnts, img)
+    blurred_triangles_squared = blur(image_triangles_squares, 3, sensitivity_to_light='ignore').copy()
+    final_cnts = get_contours(blurred_triangles_squared)
     return final_cnts, img
 
 def preprocess_img_2(origin_img, side):
@@ -31,13 +31,6 @@ def preprocess_img_2(origin_img, side):
     img = cv2.threshold(img.copy(), 0, 255, cv2.THRESH_BINARY)[1]
     cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     cnts_output, triangle_squares_img = extract_triangles_squares_2(cnts, img)
-
-    # for c in cnts:
-        # cv2.drawContours(origin_img, [c], -1, (50, 255, 50), 1)
-
-    # cv2.imshow("image", origin_img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     return cnts_output, origin_img
 
 def extract_triangles_squares(cnts, image):    
@@ -175,57 +168,3 @@ def crop(img, side="left"):
         img = img[:, box_width:width_img]
 
     return img
-
-def contour_intersect(main_cnt, new_cnt):
-    """
-    check if contour new_cnt intersect with the main one (main_cnt)
-    """
-    intersecting_pts = []
-
-    ## Loop through all points in the contour
-    for pt in new_cnt:
-        x,y = pt[0]
-
-        ## find point that intersect the reference contour
-        ## edges_only flag check if the intersection to detect is only at the edges of the contour
-        i = 0
-        for cnt in main_cnt:
-            if [[x, y]] in cnt:
-                if i == 0:
-                    print([[x, y]])
-                    i += 1
-                intersecting_pts.append(pt[0])
-
-    if len(intersecting_pts) > 0:
-        return True
-    else:
-        return False
-
-def detect_black_color(img):
-    # img : OpenCV image
-    BLACK_MIN = np.array([0, 0, 0])
-    BLACK_MAX = np.array([180, 255, 29])
-
-    hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-    # Threshold the HSV image to get only blue colors
-    frame_threshed = cv2.inRange(hsv_img, BLACK_MIN, BLACK_MAX)
-
-    return frame_threshed
-
-def detect_white_color(img):
-    # img : OpenCV image
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-    # define range of white color in HSV
-    # change it according to your need !
-    lower_white = np.array([0,0,168], dtype=np.uint8)
-    upper_white = np.array([172,111,255], dtype=np.uint8)
-
-    # Threshold the HSV image to get only white colors
-    mask = cv2.inRange(hsv, lower_white, upper_white)
-    # Bitwise-AND mask and original image
-    res = cv2.bitwise_and(img,img, mask= mask)
-
-    return mask
-

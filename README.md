@@ -1,15 +1,14 @@
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/logo.jpg"></p>
+<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/logo.jpg"></p>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
-[![Build Status](https://travis-ci.org/anfederico/Clairvoyant.svg?branch=master)](https://travis-ci.org/anfederico/Clairvoyant)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 # TangrIAm Project
 #### Real-time tangram form detection from a live video stream.
 
-The project is partnership between Exploradôme museum, OCTO Technology and Microsoft and it aims to introduce the concept and application of artificial intelligence to young children. The specific application developed for the project is to apply object detection to live tangram solving.
+The project is a partnership between Exploradôme museum, OCTO Technology and Microsoft and it aims to introduce the concept and application of artificial intelligence to young children. The specific application developed for the project is to apply object detection to live tangram solving.
 
 A tangram is a dissection puzzle consisting of seven flat polygons (5 triangles, 1 square and 1 parallelogram) which are combined to obtain a specific shape. The objective is to replicate a pattern (given only an outline) using all seven pieces without overlap.
 
@@ -19,21 +18,22 @@ Tangram can be played either by multiple teams at the same time, racing to be th
 This project's objective is to detect the similarity between the shape drawn by each player at any point in time and the twelve possible target classes. 
 The predictions are to be in real-time from a live video feed of the game board.
 
-Within the framework of the project, 12 tangram selected shapes act as classes for the classifier, classes' names English (French):
- - Boat (Bateau)
- - Bow (Bol)
- - Bridge (Pont)
- - Cat (Chat)
- - Fox (Renard)
- - Hammer (Marteau)
- - Heart (Coeur)
- - House (Maison)
- - Mountain (Montagne)
- - Rabbit (Lapin)
- - Swan (Cygne)
- - Turtle (Tortue)
+Within the framework of the project, 12 tangram selected shapes act as classes for the classifier:
 
-<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Montages.jpg"></p>
+- Boat (Bateau)
+- Bow (Bol)
+- Bridge (Pont)
+- Cat (Chat)
+- Fox (Renard)
+- Hammer (Marteau)
+- Heart (Coeur)
+- House (Maison)
+- Mountain (Montagne)
+- Rabbit (Lapin)
+- Swan (Cygne)
+- Turtle (Tortue)
+
+<p align="center"><img width=100% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/Montages.jpg"></p>
 
 
 ## Installation
@@ -52,19 +52,19 @@ pip install -r requirements.txt
 
 
 ### With an external webcam
-```
+```shell
 # connect an external webcam and launch the script, specifying the board side of interest (in this example right)
 python3 main.py --mode 1 --side right
 ```
 
 ### With a video saved locally
-```
+```shell
 # launch the script using a video saved locally, specifying the board side of interest (in this example left)
 python3 main.py --mode /videos/coeur.pm4 --side left
 ```
 
 ### With an image
-```
+```shell
 # launch the app with an image on the right side, specifying the board side of interest (in this example right)
 python3 main.py --mode /videos/coeur.jpg --side right
 ```
@@ -87,15 +87,15 @@ Our approach has been to avoid the use of ML and DL techniques and leverage Open
 
  1) Our original image
 
-<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/original.JPG"></p>
+<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/original.JPG"></p>
 
  2) Detect edges
  
-<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/canny_edge.JPG"></p>
+<p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/canny_edge.JPG"></p>
 
 3) Find geometric shapes 
  
- <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/Shapes_only.JPG"></p>
+ <p align="center"><img width=30% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/Shapes_only.JPG"></p>
 
 
 ## Classification results
@@ -106,17 +106,19 @@ Frames per seconds : 40-50 fps
 ### Prediction results in an ideal testing environment
 The below results are valid for "final" predictions, ie the class predicted by the program once the correct form was finalized. 
 
-<p align="center"><img width=60% src="./tests/confusion_matrix_clean_dataset.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/confusion_matrix_clean_dataset.png")</p>
 
-<p align="center"><img width=60% src="./tests/metrics_clean_test.png")</p>
+
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/metrics_clean_test.png")</p>
 
 
 ### Prediction results in a more challenging testing environment
 Results below were obtained using a more challenging testing dataset (incomplete form, slight mistake in the final form, objects between the camera and the board, challenging light conditions...) and are probably closer to the expected production environment.
 
-<p align="center"><img width=60% src="./tests/confusion_matrix.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/confusion_matrix.png")</p>
 
-<p align="center"><img width=60% src="./tests/classification_metrics.png")</p>
+
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/classification_metrics.png")</p>
 
 ## Project metainformation
 
@@ -139,12 +141,10 @@ To that end, changing the preprocessing pipeline (from a binary threshold to can
    The results from this approach highlight how the Hu Moments approach results in near-perfect predictions in ideal conditions but does not generalize well as the absence or presence of a single geometrice form completely changes their values and hence the program's ability to match it with the appropriate target class.
 
 <p align="center"> Clean dataset results with the Hu Moments approach </p>
-<p align="center"><img width=60% src="./tests/hu_moments_metrics_clean_dataset.png")</p>
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/hu_moments_metrics_clean_dataset.png")</p>
  
 <p align="center"> Challenging dataset results with the Hu Moments approach</p>
-<p align="center"><img width=60% src="./tests/hu_moments_mixed_dataset.png")</p>
-
-
+<p align="center"><img width=60% src="https://github.com/Nohossat/exploradome_tangram/blob/numpy---team-4/data/imgs/hu_moments_mixed_dataset.png")</p>
 
 
 

@@ -6,6 +6,15 @@ import imutils
 import math
 import pandas as pd
 
+# caclate distances for Hu Moments
+def dist_humoment(hu1,hu2):
+    """
+    return sum of euclidienne distance,sum of squart of pow difference
+    author: @Gautier
+    """
+    distance = np.linalg.norm(hu1-hu2)
+    return distance
+
 # see what functions we really use in the following ones @Gautier
 def detect_forme(cnts, image):
     '''
@@ -41,7 +50,10 @@ def detect_forme(cnts, image):
 
     return cnts_output
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c2df72b96944d14fce679f189237fe32ca3f34c0
 def distance_formes(contours):
     '''
     In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
@@ -204,7 +216,6 @@ def distance_formes(contours):
     # print(centers)
     return centers2, perimeters2
 
-
 def delete_isolate_formes3(formes, threshold=10):
     '''
     Delete all shapes if the most distance between the shape to all shapes is bigger than the threshold
@@ -241,6 +252,7 @@ def delete_isolate_formes3(formes, threshold=10):
                 forme_output[keys].append(formes[keys][i])
 
     return forme_output        
+
 
 def ratio_distance(centers, perimeters):
     '''
