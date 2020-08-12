@@ -154,6 +154,10 @@ To that end, changing the preprocessing pipeline (from a binary threshold to can
 [Bastien](https://github.com/BasCR-hub)  
 [Nicolas](https://github.com/nicolaszys)  
 [Renata](https://github.com/renatakaczor)  
+<<<<<<< HEAD
+[Gautier](https://github.com/yanggautier)  
+=======
 [Gauthier](https://github.com/yanggautier)  
 
+>>>>>>> 9ad939f7eef29d3d08dca64da952e4a5e484bd1b
 
