@@ -50,10 +50,6 @@ def detect_forme(cnts, image):
 
     return cnts_output
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c2df72b96944d14fce679f189237fe32ca3f34c0
 def distance_formes(contours):
     '''
     In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
