@@ -207,7 +207,7 @@ def distance_formes(contours):
 
 def delete_isolate_formes3(formes, threshold=10):
     '''
-    Delete all shapes that if the most distance between the shape to all shapes is bigger than the threshold
+    Delete all shapes if the most distance between the shape to all shapes is bigger than the threshold
     Author: @Gautier
     =================================================
     Parameter:
@@ -215,6 +215,7 @@ def delete_isolate_formes3(formes, threshold=10):
      @threshold: the threshold of distance between shapes
     '''
     mindistances = {}
+    # Save all min distances by shape to a dictionary
     for keys1, values1 in formes.items():
         mindistances[keys1] = []
         for i in range(len(values1)):
@@ -230,6 +231,8 @@ def delete_isolate_formes3(formes, threshold=10):
                     if distance < min_distance and distance > 0:
                         min_distance = distance
             mindistances[keys1].append(min_distance)
+            
+    # we take all shapes if this shape is smaller than threshold
     forme_output = {}
     for keys, values in mindistances.items():
         forme_output[keys] = []
@@ -238,22 +241,11 @@ def delete_isolate_formes3(formes, threshold=10):
                 forme_output[keys].append(formes[keys][i])
 
     return forme_output        
-    
-def minDistance(contour, contourOther):
-
-    distanceMin = 99999999
-    for point1 in contour:
-        for point2 in contourOther:
-            for xA, yA in point1:
-                for xB, yB in point2:
-                    distance = ((xB-xA)**2+(yB-yA)**2)**(1/2) # distance formula
-                    if (distance < distanceMin and distance > 0 ):
-                        distanceMin = distance
-    return distanceMin 
 
 def ratio_distance(centers, perimeters):
     '''
     This function calculate all ratios of distances between shapes with a shape's side  
+    Author: @Gautier
     ==================================================
     Parameters
      @centers: an array of centers,  a center point is a tuple of 2 numbers: absciss, ordinate, and a 
@@ -312,11 +304,19 @@ def ratio_distance(centers, perimeters):
 
                             else:
                                 distances[forme1 + "-" + forme2 + "_" + str(i + 1) + str(
-                                    j + 1)] = 1
+                                    j + 1)] = 0
     return distances
 
 def sorted_distances(distances):
-    
+    '''
+    This function sorted the distances between same relationship of two shapes
+    Author: @Gautier
+    =======================================
+    Parameter: 
+     @distances: dictionnay of distances between all two shapes, like this {"smallTriangle-middleTriangle_11":[0.5], "smallTriangle-middleTriangle_21":[0.4]}
+     
+    Output: a dictionary of distances between all two shapes but ordered by distance and rename keys by the nomber of the same relation, example: {"smallTriangle-middleTriangle1":[0.4], "smallTriangle-middleTriangle2":[0.5]}
+    '''
     data_distances = {"smallTriangle-smallTriangle": [], "smallTriangle-middleTriangle": [],
                       "smallTriangle-bigTriangle": [], "smallTriangle-squart": [], "smallTriangle-parallelo": [],
                       "middleTriangle-bigTriangle": [], "middleTriangle-squart": [], "middleTriangle-parallelo": [],
