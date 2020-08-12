@@ -24,8 +24,6 @@ def preprocess_img(img, side=None, sensitivity_to_light=100):
     blurred_triangles_squared = blur(image_triangles_squares, 7, sensitivity_to_light='ignore').copy()
     final_cnts = get_contours(blurred_triangles_squared)
 
-    display_contour(final_cnts, img)
-
     return final_cnts, img
 
 def preprocess_img_2(origin_img, side):
@@ -47,35 +45,46 @@ def preprocess_img_2(origin_img, side):
     img = cv2.dilate(img, kernel)
     img = cv2.threshold(img.copy(), 0, 255, cv2.THRESH_BINARY)[1]
     cnts, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    cnts_output, triangle_squares_img = extract_triangles_squares(cnts, img)
+    cnts_output, triangle_squares_img = extract_triangles_squares_2(cnts, img)
     return cnts_output, origin_img
 
-# def extract_triangles_squares(cnts, image):    
-#     cnts_output = []
-#     out_image = np.zeros(image.shape, image.dtype)
+def extract_triangles_squares(cnts, image):  
+    '''
+    This function extracts only the triangles, squares and parallelograms from a list of contours and hence removes 'noise' items.
+    To do so, it calls OpenCV's appoxPolyDp function to identify which contours have either 3 or 4 summits then returns those that 
+    fit area and/or width-height ratio criteria.
+    
+    Parameters :
+    cnts_output = list of contours from cv2.findContours
+    origin_img = OpenCV image
+    
+    author : @Gautier
+    '''  
+    cnts_output = []
+    out_image = np.zeros(image.shape, image.dtype)
 
-#     for idx, cnt in enumerate(cnts):
-#         perimetre = cv2.arcLength(cnt, True)
-#         approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
+    for idx, cnt in enumerate(cnts):
+        perimetre = cv2.arcLength(cnt, True)
+        approx = cv2.approxPolyDP(cnt, 0.02 * perimetre, True)
 
-#         area = cv2.contourArea(cnt)
-#         img_area = image.shape[0] * image.shape[1]
+        area = cv2.contourArea(cnt)
+        img_area = image.shape[0] * image.shape[1]
 
-#         if area/img_area > 0.0005:
-#             # for triangle
-#             if len(approx) == 3:
-#                 cnts_output.append(cnt)
-#                 cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
-#                 cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))
-#             # for quadrilater
-#             elif len(approx) == 4:
-#                 (x, y, w, h) = cv2.boundingRect(approx)
-#                 ratio = w / float(h)
-#                 if(ratio >= 0.3 and ratio <= 3):
-#                     cnts_output.append(cnt)
-#                     cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
-#                     cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))         
-#     return out_image
+        if area/img_area > 0.0005:
+            # for triangle
+            if len(approx) == 3:
+                cnts_output.append(cnt)
+                cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
+                cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))
+            # for quadrilater
+            elif len(approx) == 4:
+                (x, y, w, h) = cv2.boundingRect(approx)
+                ratio = w / float(h)
+                if(ratio >= 0.3 and ratio <= 3):
+                    cnts_output.append(cnt)
+                    cv2.drawContours(out_image, [cnt], -1, (50, 255, 50), 7)
+                    cv2.fillPoly(out_image, pts =[cnt], color=(50, 255, 50))         
+    return out_image
 
 def blur(img, strength_blur = 7, sensitivity_to_light=50):
     '''
@@ -129,7 +138,7 @@ def display_contour(cnts, img):
     cv2.moveWindow('Image', 30, 30)
     cv2.waitKey(0)
 
-def extract_triangles_squares(cnts, img):
+def extract_triangles_squares_2(cnts, img):
     '''
     This function extracts only the triangles, squares and parallelograms from a list of contours and hence removes 'noise' items.
     To do so, it calls OpenCV's appoxPolyDp function to identify which contours have either 3 or 4 summits then returns those that 
@@ -180,6 +189,10 @@ def crop(img, side="left"):
 
     author: @Nohossat
     """
+
+    if side is None:
+        return img
+
     assert side in ["left", "right"], "not a valid side"
 
     # we take only 55% of the frame either left or right side

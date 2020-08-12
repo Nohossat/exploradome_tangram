@@ -12,21 +12,34 @@ import pandas as pd
 import os
 import re
  
-from tangram_app.predictions import *
-
-#def test_img_to_sorted_dists():
- #   pass
+from tangram_app.processing import preprocess_img, preprocess_img_2
+from tangram_app.predictions import get_predictions, get_predictions_with_distances
 
 def test_get_predictions():
-    # test the probabilities to belong to each class in descending order
-     img = 'data/tangrams/bateau_4_right.jpg'
-     img_cv = cv2.imread(img)
-     humoments = pd.read_csv('data/hu_moments.csv')
-     target = humoments.iloc[:, -1]
-     probalitity, cnts = get_predictions(img_cv, humoments, target)
-     assert isinstance(probalitity, pd.core.frame.DataFrame), 'Predictions should be dataframe'
-     assert isinstance(cnts, list), 'Contours should be list'
-     assert probalitity.loc[0, 'target'] == 'bateau', 'Predictions should be bateau'
+    img = 'data/test_images/bateau_4_right.jpg'
 
-#def test_get_predictions_with_distances():
- #   pass
+    # get size to analyze from image path
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
+
+    img_cv = cv2.imread(img)
+
+    # get predictions
+    probas = get_predictions(img_cv, preprocess_img, side)
+    assert isinstance(probas, pd.core.frame.DataFrame), 'Predictions should be dataframe'
+    assert probas.loc[0, 'target'] == 'bateau', 'Predictions should be bateau'
+
+def test_get_predictions_with_distances():
+    # test the probabilities to belong to each class in descending order
+    img = 'data/test_images/bateau_4_right.jpg'
+
+    # get size to analyze from image path
+    pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
+    result = pattern.search(img)
+    side = result.group(2)
+
+    img_cv = cv2.imread(img)
+    probas = get_predictions_with_distances(img_cv, side, preprocess_img_2)
+    assert isinstance(probas, pd.core.frame.DataFrame), 'Predictions should be dataframe'
+    assert probas.loc[0, 'target'] == 'bateau', 'Predictions should be bateau'

@@ -6,6 +6,8 @@ import imutils
 import math
 import pandas as pd
 
+from tangram_app.processing import preprocess_img_2
+
 # caclate distances for Hu Moments
 def dist_humoment(hu1,hu2):
     """
@@ -15,10 +17,9 @@ def dist_humoment(hu1,hu2):
     distance = np.linalg.norm(hu1-hu2)
     return distance
 
-# see what functions we really use in the following ones @Gautier
 def detect_forme(cnts, image):
     '''
-    This function detects all triangle  and quadilater shape in the image
+    This function detects all triangle and rectangle shapes in the image
     author: @Gautier
     ================================
     Parameter:
@@ -52,12 +53,14 @@ def detect_forme(cnts, image):
 
 def distance_formes(contours):
     '''
-    In the first step this functions separates all shapes in 5 shapes differents: small triangle, midlle triangle, big triangle, square and 
-    In the second step it calculates perimeters and centers of all shapes, and remove duplicate shapes
+    In the first step this function separates all shapes in 5 different shapes: small triangle, midlle triangle, big triangle, square and parallelogram
+    In the second step it calculates the perimeters and centers of all shapes, and remove duplicate ones
     author: @Gautier
     ==============================
     Parameter:
      @contours: the cv2.contours that returns last function
+
+    Returns : centers and perimeters of all shapes
     '''
     
     formes = {"triangle": [], "squart": [], "parallelo": []}
@@ -209,7 +212,6 @@ def distance_formes(contours):
                     centers2[key].append(centers[key][i])
                     perimeters2[key].append(perimeters[key][i])
 
-    # print(centers)
     return centers2, perimeters2
 
 def delete_isolate_formes3(formes, threshold=10):
@@ -257,6 +259,8 @@ def ratio_distance(centers, perimeters):
     Parameters
      @centers: an array of centers,  a center point is a tuple of 2 numbers: absciss, ordinate, and a 
      @perimeters: a dictionnay of perimeters, it has keys of all shape's name
+    
+    Returns : distances of all shapes between each other
     '''
     distances = {}
 
@@ -367,14 +371,15 @@ def sorted_distances(distances):
 
 def create_all_types_distances(link):
     '''
-    Create to a csv file of all distances of shapes of all ours classes 
+    Create a csv file of all distances of shapes of all ours classes 
     author: @Gautier
     ==========================
     parameter:
         link: directory to save the csv file
     '''
-    images = ['bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.JPG', 'marteau.jpg',
-              'montagne.jpg', 'pont.jpg', 'renard.JPG', 'tortue.jpg']
+    images = ['bateau.jpg', 'bol.jpg', 'chat.jpg', 'coeur.jpg', 'cygne.jpg', 'lapin.jpg', 'maison.jpg', 'marteau.jpg',
+              'montagne.jpg', 'pont.jpg', 'renard.jpg', 'tortue.jpg']
+
     data = pd.DataFrame(
         columns=['smallTriangle-smallTriangle1', 'smallTriangle-middleTriangle1', 'smallTriangle-middleTriangle2',
                  'smallTriangle-bigTriangle1', 'smallTriangle-bigTriangle2', 'smallTriangle-bigTriangle3',
@@ -386,7 +391,11 @@ def create_all_types_distances(link):
 
     for im in images:
         img_cv = cv2.imread('data/tangrams/' + im)
-        sorted_dists = img_to_sorted_dists(img_cv)
+        cnts, img = preprocess_img_2(img_cv, side=None)
+        cnts_forms = detect_forme(cnts, img)
+        centers, perimeters = distance_formes(cnts_forms)
+        distances = ratio_distance(centers, perimeters)
+        sorted_dists = sorted_distances(distances)
         classe = im.split('.')[0]
         sorted_dists['classe'] = classe
         data = data.append(sorted_dists, ignore_index=True)

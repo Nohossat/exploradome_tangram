@@ -1,7 +1,7 @@
 from .processing import *
 from .distances import *
 from .moments import *
-import pprint
+
 
 def get_predictions_with_distances(img_cv, side, prepro):
     '''
@@ -13,7 +13,6 @@ def get_predictions_with_distances(img_cv, side, prepro):
      @side: it take the position of the table, if side is left we take just the left side of table, right we take the right side
      @prepro: function of preprocessing
     '''
-    pp = pprint.PrettyPrinter(depth=4)
     cnts, cropped_img = prepro(img_cv, side=side)
 
     for c in cnts:
@@ -27,7 +26,6 @@ def get_predictions_with_distances(img_cv, side, prepro):
     data = pd.read_csv("data/tangram_properties/data.csv", sep=";")
     mses = np.array(mse_distances(data, sorted_dists))
     
-
     # get proba
     if np.all((mses == 0)):
         return None
