@@ -2,6 +2,7 @@ from .processing import *
 from .distances import *
 from .moments import *
 
+
 def get_predictions_with_distances(img_cv, side, prepro):
     '''
     This function take in input a image and return a dictionnay of shape distances
@@ -12,21 +13,19 @@ def get_predictions_with_distances(img_cv, side, prepro):
      @side: it take the position of the table, if side is left we take just the left side of table, right we take the right side
      @prepro: function of preprocessing
     '''
-    
     cnts, cropped_img = prepro(img_cv, side=side)
-    image, contours = merge_tangram(cropped_img, cnts)
 
-    for c in contours:
+    for c in cnts:
         cv2.drawContours(cropped_img, [c], -1, (50, 255, 50), 2)
 
     centers, perimeters = distance_formes(cnts)
     distances = ratio_distance(centers, perimeters)
     sorted_dists = sorted_distances(distances)
-    
-    # get distances
-    data = pd.read_csv("data/data.csv", sep=";")
-    mses = np.array(mse_distances(data, sorted_dists))
 
+    # get distances
+    data = pd.read_csv("data/tangram_properties/data.csv", sep=";")
+    mses = np.array(mse_distances(data, sorted_dists))
+    
     # get proba
     if np.all((mses == 0)):
         return None
@@ -44,7 +43,7 @@ def get_predictions_with_distances(img_cv, side, prepro):
     # returns sorted probas
     return probas_labelled
 
-def get_predictions(image, prepro, side, hu_moments_dataset="data/hu_moments.csv"):
+def get_predictions(image, prepro, side, hu_moments_dataset="data/tangram_properties/hu_moments.csv"):
     """
     compare moments of a frame with the hu moments of our dataset images  
 
@@ -80,7 +79,7 @@ def get_predictions(image, prepro, side, hu_moments_dataset="data/hu_moments.csv
     HuMo = np.hstack(HuMo)
 
     # get distances
-    dist = hu_moments.apply(lambda row : dist_humoment4(HuMo, row.values[:-1]), axis=1)
+    dist = hu_moments.apply(lambda row : dist_humoment(HuMo, row.values[:-1]), axis=1)
     dist_labelled = pd.concat([dist, target], axis=1)
     dist_labelled.columns = ['distance', 'target']
 

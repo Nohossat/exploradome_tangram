@@ -7,9 +7,10 @@ from .tangram_game import tangram_game
 from .utils import get_files
 from .processing import *
 from .predictions import *
+from sklearn.metrics import classification_report, confusion_matrix
 
-# test statiques
-def get_classification_report_pics(dataset_path=None, game=tangram_game):
+
+def get_classification_report_pics(title_report="Tangram Game", dataset_path=None, game=tangram_game, prepro=preprocess_img_2, pred_func=get_predictions_with_distances):
     """
     from a set of images, get global accuracy, precision, recall
     """
@@ -26,7 +27,7 @@ def get_classification_report_pics(dataset_path=None, game=tangram_game):
 
     # for each image, get prediction by our algorithm
     for label, img_path in images: 
-        predictions = game(image=img_path, prepro=preprocess_img_2, pred_func=get_predictions_with_distances)
+        predictions = game(image=img_path, prepro=prepro, pred_func=pred_func)
         if predictions is None:
             continue
 
@@ -39,11 +40,16 @@ def get_classification_report_pics(dataset_path=None, game=tangram_game):
     # get metrics
     conf_matrix = confusion_matrix(y_true, y_pred, labels=classes)
     report = classification_report(y_true, y_pred, target_names=classes)
-    print(type(report))
 
     # plot confusion matrix
-    sns.heatmap(conf_matrix, annot = True, xticklabels=classes, yticklabels=classes)
-    plt.show()
+    conf_matrix_heatmap = sns.heatmap(conf_matrix, annot = True, xticklabels=classes, yticklabels=classes)
+
+    # save report / matrix
+    with open(f'metrics/{title_report}_report.txt', 'w') as f:
+        f.write(report)
+
+    fig = conf_matrix_heatmap.get_figure()
+    fig.savefig(f'metrics/{title_report}_confusion_matrix.png')
 
     return report
 
