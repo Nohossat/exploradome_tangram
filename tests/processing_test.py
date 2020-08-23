@@ -25,6 +25,10 @@ def test_preprocess_img():
     assert isinstance(cnts, list)
     assert isinstance(img, np.ndarray)
 
+<<<<<<< HEAD
+'''def test_preprocess_img_2():
+    pass
+=======
 def test_preprocess_img_2():
     img = 'data/test_images/bateau_4_right.jpg'
     
@@ -32,6 +36,7 @@ def test_preprocess_img_2():
     pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
     result = pattern.search(img)
     side = result.group(2)
+>>>>>>> b325b4ae29a0707c6fed2b571b5b4f4788886fa8
 
     img_cv = cv2.imread(img)
     cnts, img = preprocess_img_2(img_cv, side=side)
@@ -60,18 +65,30 @@ def test_blur():
     assert isinstance(image_blurred, np.ndarray)
 
 def test_get_contours():
+<<<<<<< HEAD
+    pass'''
+=======
     img = 'data/test_images/bateau_4_right.jpg'
+>>>>>>> b325b4ae29a0707c6fed2b571b5b4f4788886fa8
 
     # get side
     pattern = re.compile(r"([a-zA-Z]+)_\d{1,2}_(\w+)")
     result = pattern.search(img)
     side = result.group(2)
     img_cv = cv2.imread(img)
+<<<<<<< HEAD
+    image_resize = resize(img_cv, side=side)
+    assert image_resize.shape[0:2] == (494, 360), 'image is too big'
+ 
+'''def test_display_contour():
+    pass
+=======
 
     img_cropped = crop(img_cv, side=side)
     image_blurred = blur(img_cropped,1)
     cnts = get_contours(image_blurred)
     assert isinstance(cnts, list)
+>>>>>>> b325b4ae29a0707c6fed2b571b5b4f4788886fa8
 
 def test_extract_triangles_squares_2():    
     img = 'data/test_images/bateau_4_right.jpg'
@@ -106,3 +123,9 @@ def test_crop():
 
     assert previous_size > img.shape, "The cropping didn't occur"
 
+<<<<<<< HEAD
+def test_detect_white_color():
+    pass
+'''
+=======
+>>>>>>> b325b4ae29a0707c6fed2b571b5b4f4788886fa8
